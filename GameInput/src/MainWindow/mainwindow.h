@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
 
 #include "../TcpServer.h"
 
@@ -22,6 +23,10 @@ private:
     TcpServer *tcpServer;
 
     void connectSignals();
+
+   private slots:
+
+    void buttonClicked();
 };
 
 #endif // MAINWINDOW_H

@@ -21,7 +21,7 @@ void TcpServer::connectSignals() {
 }
 
 void TcpServer::ErrorOccurredOnNewConnection(QAbstractSocket::SocketError socketError) {
-
+    qDebug() << "Error occurred";
 }
 
 void TcpServer::newPendingConnection() {
@@ -38,9 +38,9 @@ void TcpServer::socketDisconnected() {
         if (sockets[i]->state() == QAbstractSocket::SocketState::ClosingState || sockets[i]->state() == QAbstractSocket::SocketState::UnconnectedState) {
             sockets[i]->disconnect();
             sockets.removeAt(i);
+            qDebug() << "disconnected socket at index" << i;
             i--;
             //todo log
-            qDebug() << "disconnected socket at index" << i;
         }
 }
 
