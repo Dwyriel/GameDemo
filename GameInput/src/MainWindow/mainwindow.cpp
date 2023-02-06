@@ -12,4 +12,9 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::connectSignals() {
+    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::buttonClicked);
+}
+
+void MainWindow::buttonClicked() {
+    tcpServer->SendCommands(commands);
 }

@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPushButton>
 
-#include "../TcpServer.h"
+#include "src/TcpServer/TcpServer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,8 +21,13 @@ public:
 private:
     Ui::MainWindow *ui;
     TcpServer *tcpServer;
+    Commands commands;
 
     void connectSignals();
+
+   private slots:
+
+    void buttonClicked();
 };
 
 #endif // MAINWINDOW_H
