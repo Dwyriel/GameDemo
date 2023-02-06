@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
         src/MainWindow/mainwindow.ui
         src/TcpServer.cpp
         src/TcpServer.h)
+        src/messages.h)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GameInput
