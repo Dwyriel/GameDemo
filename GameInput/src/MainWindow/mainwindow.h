@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QPushButton>
+#include <QKeyEvent>
 
 #include "src/TcpServer/TcpServer.h"
 
@@ -25,7 +26,13 @@ private:
 
     void connectSignals();
 
-   private slots:
+protected:
+
+    void keyPressEvent(QKeyEvent *qKeyEvent) override;
+
+    void keyReleaseEvent(QKeyEvent *qKeyEvent) override;
+
+private slots:
 
     void buttonClicked();
 };
