@@ -12,7 +12,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::connectSignals() {
-    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::buttonClicked);
+    //connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::buttonClicked);
 }
 
 void MainWindow::buttonClicked() {
@@ -36,24 +36,29 @@ void MainWindow::keyPressEvent(QKeyEvent *qKeyEvent) {
             case Qt::Key_A:
                 commands.moveLeft = true;
                 break;
-            case Qt::Key_Up:
+            case Qt::Key_I:
                 commands.rotateUp = true;
                 break;
-            case Qt::Key_Right:
+            case Qt::Key_L:
                 commands.rotateRight = true;
                 break;
-            case Qt::Key_Down:
+            case Qt::Key_K:
                 commands.rotateDown = true;
                 break;
-            case Qt::Key_Left:
+            case Qt::Key_J:
                 commands.rotateLeft = true;
                 break;
-            case Qt::Key_G:
-                commands.fireWeapon = true;
+            case Qt::Key_E:
+                EIsPressed = true;
+                break;
+            case Qt::Key_U:
+                UIsPressed = true;
                 break;
             default:
                 handled = false;
         }
+        if(EIsPressed || UIsPressed)
+            commands.fireWeapon = true;
     }
     if(handled) {
         tcpServer->SendCommands(commands);
@@ -79,24 +84,29 @@ void MainWindow::keyReleaseEvent(QKeyEvent *qKeyEvent) {
             case Qt::Key_A:
                 commands.moveLeft = false;
                 break;
-            case Qt::Key_Up:
+            case Qt::Key_I:
                 commands.rotateUp = false;
                 break;
-            case Qt::Key_Right:
+            case Qt::Key_L:
                 commands.rotateRight = false;
                 break;
-            case Qt::Key_Down:
+            case Qt::Key_K:
                 commands.rotateDown = false;
                 break;
-            case Qt::Key_Left:
+            case Qt::Key_J:
                 commands.rotateLeft = false;
                 break;
-            case Qt::Key_G:
-                commands.fireWeapon = false;
+            case Qt::Key_E:
+                EIsPressed = false;
+                break;
+            case Qt::Key_U:
+                UIsPressed = false;
                 break;
             default:
                 handled = false;
         }
+        if(!EIsPressed && !UIsPressed)
+            commands.fireWeapon = false;
     }
     if(handled) {
         tcpServer->SendCommands(commands);

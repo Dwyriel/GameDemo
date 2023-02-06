@@ -23,6 +23,7 @@ private:
     Ui::MainWindow *ui;
     TcpServer *tcpServer;
     Commands commands;
+    bool UIsPressed = false, EIsPressed = false;
 
     void connectSignals();
 
