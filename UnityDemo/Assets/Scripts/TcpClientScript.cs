@@ -93,7 +93,7 @@ public class TcpClientScript : MonoBehaviour
                         continue;
                     }
                     var messageLength = BitConverter.ToInt32(header, 0);
-                    var messageType = BitConverter.ToInt32(header, 0 + sizeof(int));
+                    var messageType = (MessageType) BitConverter.ToInt32(header, 0 + sizeof(int));
                     if (messageLength == 0)
                     {
                         failedConnectionCounter++;
@@ -101,7 +101,7 @@ public class TcpClientScript : MonoBehaviour
                     }
                     switch (messageType)
                     {
-                        case 0:
+                        case MessageType.Commands:
                             var commands = new byte[messageLength];
                             length = networkStream.Read(commands, 0, messageLength);
                             Debug.Log(length);
@@ -111,12 +111,14 @@ public class TcpClientScript : MonoBehaviour
                                 UpdateCommands(commands);
                             }
                             break;
-                        case 1:
+                        case MessageType.Other:
                             var message = new byte[messageLength];
                             length = networkStream.Read(message, 0, messageLength);
                             failedConnectionCounter = 0;
                             _messages.Add(Encoding.ASCII.GetString(message, 0, length));
                             break;
+                        default:
+                            continue;
                     }
                 }
             }
@@ -157,15 +159,15 @@ public class TcpClientScript : MonoBehaviour
     private void UpdateCommands(byte[] commands)
     {
         var index = 0;
-        Commands.startGame = BitConverter.ToBoolean(commands, index++);
-        Commands.fireWeapon = BitConverter.ToBoolean(commands, index++);
-        Commands.moveForward = BitConverter.ToBoolean(commands, index++);
-        Commands.moveRight = BitConverter.ToBoolean(commands, index++);
-        Commands.moveBackward = BitConverter.ToBoolean(commands, index++);
-        Commands.moveLeft = BitConverter.ToBoolean(commands, index++);
-        Commands.rotateUp = BitConverter.ToBoolean(commands, index++);
-        Commands.rotateRight = BitConverter.ToBoolean(commands, index++);
-        Commands.rotateDown = BitConverter.ToBoolean(commands, index++);
-        Commands.rotateLeft = BitConverter.ToBoolean(commands, index);
+        Commands.StartGame = BitConverter.ToBoolean(commands, index++);
+        Commands.FireWeapon = BitConverter.ToBoolean(commands, index++);
+        Commands.MoveForward = BitConverter.ToBoolean(commands, index++);
+        Commands.MoveRight = BitConverter.ToBoolean(commands, index++);
+        Commands.MoveBackward = BitConverter.ToBoolean(commands, index++);
+        Commands.MoveLeft = BitConverter.ToBoolean(commands, index++);
+        Commands.RotateUp = BitConverter.ToBoolean(commands, index++);
+        Commands.RotateRight = BitConverter.ToBoolean(commands, index++);
+        Commands.RotateDown = BitConverter.ToBoolean(commands, index++);
+        Commands.RotateLeft = BitConverter.ToBoolean(commands, index);
     }
 }
