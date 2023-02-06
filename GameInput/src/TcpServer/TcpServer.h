@@ -8,6 +8,8 @@
 #include <QString>
 #include <QDebug>
 
+#include "../messages.h"
+
 class TcpServer : public QObject {
 Q_OBJECT
 public:
@@ -15,11 +17,18 @@ public:
 
     ~TcpServer();
 
-    void SendMessage(QByteArray& msg);
+    void SendMessage(const Message &msg);
+
+    void SendCommands(Commands &msg);
 
 private:
+    struct InternalTcpSocket{
+        quint64 id;
+        QTcpSocket *socket;
+    };
+    quint64 idCounter = 0;
     QTcpServer *qTcpServer;
-    QList<QTcpSocket *> sockets;
+    QList<InternalTcpSocket> sockets;
 
     void connectSignals();
 

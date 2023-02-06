@@ -16,6 +16,5 @@ void MainWindow::connectSignals() {
 }
 
 void MainWindow::buttonClicked() {
-    QByteArray _d;
-    tcpServer->SendMessage(_d);
+    tcpServer->SendCommands(commands);
 }

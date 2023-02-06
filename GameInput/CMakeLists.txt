@@ -19,8 +19,8 @@ set(PROJECT_SOURCES
         src/MainWindow/mainwindow.cpp
         src/MainWindow/mainwindow.h
         src/MainWindow/mainwindow.ui
-        src/TcpServer.cpp
-        src/TcpServer.h)
+        src/TcpServer/TcpServer.cpp
+        src/TcpServer/TcpServer.h
         src/messages.h)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
