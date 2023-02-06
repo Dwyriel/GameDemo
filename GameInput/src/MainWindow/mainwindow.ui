@@ -6,25 +6,300 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>685</width>
+    <height>345</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>685</width>
+    <height>345</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>685</width>
+    <height>345</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GameInput</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QLabel" name="lblMovement">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>210</y>
-      <width>261</width>
-      <height>161</height>
+      <x>95</x>
+      <y>15</y>
+      <width>135</width>
+      <height>25</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Movement</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnMoveForward">
+    <property name="geometry">
+     <rect>
+      <x>125</x>
+      <y>50</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Forward
+(W)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnMoveRight">
+    <property name="geometry">
+     <rect>
+      <x>205</x>
+      <y>130</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Right
+(D)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnMoveLeft">
+    <property name="geometry">
+     <rect>
+      <x>45</x>
+      <y>130</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Left
+(A)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnMoveBackward">
+    <property name="geometry">
+     <rect>
+      <x>125</x>
+      <y>210</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Backward
+(S)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblRotation">
+    <property name="geometry">
+     <rect>
+      <x>455</x>
+      <y>15</y>
+      <width>135</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Rotation</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnFireWeapon">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>225</y>
+      <width>165</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Fire Weapon
+(E or U)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRotateUp">
+    <property name="geometry">
+     <rect>
+      <x>485</x>
+      <y>50</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Up
+(I)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRotateRight">
+    <property name="geometry">
+     <rect>
+      <x>565</x>
+      <y>130</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Right
+(L)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRotateLeft">
+    <property name="geometry">
+     <rect>
+      <x>405</x>
+      <y>130</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Left
+(J)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRotateDown">
+    <property name="geometry">
+     <rect>
+      <x>485</x>
+      <y>210</y>
+      <width>75</width>
+      <height>75</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Down
+(K)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnStartGame">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>130</y>
+      <width>105</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Start Game</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblStatusTitle">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>30</y>
+      <width>165</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Status</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblCurrentStatus">
+    <property name="geometry">
+     <rect>
+      <x>245</x>
+      <y>60</y>
+      <width>195</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Disconnected</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
@@ -33,13 +308,24 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>685</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>btnMoveForward</tabstop>
+  <tabstop>btnMoveLeft</tabstop>
+  <tabstop>btnMoveRight</tabstop>
+  <tabstop>btnMoveBackward</tabstop>
+  <tabstop>btnFireWeapon</tabstop>
+  <tabstop>btnRotateUp</tabstop>
+  <tabstop>btnRotateLeft</tabstop>
+  <tabstop>btnRotateRight</tabstop>
+  <tabstop>btnRotateDown</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
