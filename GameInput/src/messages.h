@@ -1,9 +1,14 @@
 #ifndef GAMEINPUT_MESSAGES_H
 #define GAMEINPUT_MESSAGES_H
 
+enum class MessageType : int {
+    Commands = 0,
+    Other = 999
+};
+
 struct Commands {
     const int messageLength = sizeof(Commands) - (sizeof(int) * 2);
-    const int messageType = 0;
+    const MessageType messageType = MessageType::Commands;
     bool startGame = false;
     bool fireWeapon = false;
     bool moveForward = false;
@@ -21,7 +26,7 @@ struct Commands {
  */
 struct Message {
     int messageLength = 0;
-    const int messageType = 1;
+    MessageType messageType = MessageType::Other;
     QByteArray message;
 } __attribute__((packed));
 

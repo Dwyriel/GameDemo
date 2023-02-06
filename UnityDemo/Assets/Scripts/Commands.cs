@@ -1,7 +1,7 @@
 enum MessageType
 {
     Commands = 0,
-    Other = 1
+    Other = 999
 }
 
 public class Commands
