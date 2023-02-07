@@ -3,5 +3,8 @@
 
 #define MAX_SOCKET_CONNECTIONS 1
 #define SERVER_DEFAULT_PORT 7030
+#define LOGS_DIR_NAME "Logs"
+#define DATE_FORMAT "yyyy.MM.dd-hh:mm:ss"
+#define LOG_FILE_EXTENSION ".log"
 
 #endif //GAMEINPUT_DEFINES_H
