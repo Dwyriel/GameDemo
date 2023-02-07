@@ -9,20 +9,23 @@
 #include <QDebug>
 
 #include "../messages.h"
+#include "../defines.h"
 
 class TcpServer : public QObject {
 Q_OBJECT
 public:
-    TcpServer(QObject *parent = nullptr, quint16 port = 7030);
+    explicit TcpServer(QObject *parent = nullptr, quint16 port = SERVER_DEFAULT_PORT);
 
-    ~TcpServer();
+    ~TcpServer() override;
+
+    void SendStartGameCommand();
+
+    void SendInputCommands(InputCommands &msg);
 
     void SendMessage(const Message &msg);
 
-    void SendCommands(Commands &msg);
-
 private:
-    struct InternalTcpSocket{
+    struct InternalTcpSocket {
         quint64 id;
         QTcpSocket *socket;
     };
@@ -31,6 +34,14 @@ private:
     QList<InternalTcpSocket> sockets;
 
     void connectSignals();
+
+signals:
+
+    void clientConnected();
+
+    void clientDisconnected();
+
+    void clientSentResponse(ClientAnswer gameResponse);
 
 private slots:
 
