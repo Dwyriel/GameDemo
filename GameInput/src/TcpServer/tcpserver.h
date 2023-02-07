@@ -22,7 +22,7 @@ public:
     void SendCommands(Commands &msg);
 
 private:
-    struct InternalTcpSocket{
+    struct InternalTcpSocket {
         quint64 id;
         QTcpSocket *socket;
     };

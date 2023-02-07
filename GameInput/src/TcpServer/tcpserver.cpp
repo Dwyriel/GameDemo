@@ -25,7 +25,7 @@ void TcpServer::ErrorOccurredOnNewConnection(QAbstractSocket::SocketError socket
 }
 
 void TcpServer::newPendingConnection() {
-    if(!qTcpServer->hasPendingConnections())
+    if (!qTcpServer->hasPendingConnections())
         return;
     auto socket = qTcpServer->nextPendingConnection();
     InternalTcpSocket internalTcpSocket = {idCounter, socket};
