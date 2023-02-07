@@ -9,9 +9,9 @@ using UnityEngine;
 public class TcpClientScript : MonoBehaviour
 {
     private const int HeaderSize = sizeof(int) * 2;
-    private const int RetryToConnectAfterMilliseconds = 2000;
-    private const int RetryToReconnectAfterMilliseconds = 10;
-    private const int MaxFailedConnectionsBeforeEndingConnection = 500;
+    private const int TimeBetweenReconnectAttemptsMilliseconds = 2000;
+    private const int TimeBetweenReadAttemptsMilliseconds = 10;
+    private const int MaxFailedReadAttemptsBeforeEndingConnection = 500;
     private readonly List<string> _messages = new();
     private TcpClient _tcpClient;
     private Thread _clientThread;
@@ -80,15 +80,13 @@ public class TcpClientScript : MonoBehaviour
                 var failedConnectionCounter = 0;
                 while (true)
                 {
-                    Debug.Log(failedConnectionCounter);
-                    if (failedConnectionCounter > MaxFailedConnectionsBeforeEndingConnection)
+                    if (failedConnectionCounter > MaxFailedReadAttemptsBeforeEndingConnection)
                         break;
                     var header = new byte[HeaderSize];
                     var length = networkStream.Read(header, 0, header.Length);
-                    Debug.Log(length);
                     if (length < HeaderSize)
                     {
-                        Thread.Sleep(RetryToReconnectAfterMilliseconds);
+                        Thread.Sleep(TimeBetweenReadAttemptsMilliseconds);
                         failedConnectionCounter++;
                         continue;
                     }
@@ -131,8 +129,24 @@ public class TcpClientScript : MonoBehaviour
             catch (Exception exception)
             {
                 Debug.Log(exception);
-                Thread.Sleep(RetryToConnectAfterMilliseconds);
+                Thread.Sleep(TimeBetweenReconnectAttemptsMilliseconds);
             }
+        }
+    }
+
+    private void SendAnswerToServer(ClientAnswer answer)
+    {
+        if (_tcpClient is null)
+            return;
+        try
+        {
+            var header = BitConverter.GetBytes(answer.MessageLength).Concat(BitConverter.GetBytes((int)answer.MessageType));
+            var message = header.Concat(BitConverter.GetBytes((int) answer.GameResponse)).ToArray();
+            _tcpClient.GetStream().Write(message, 0, message.Length);
+        }
+        catch (Exception exception)
+        {
+            Debug.Log(exception);
         }
     }
 
@@ -142,15 +156,14 @@ public class TcpClientScript : MonoBehaviour
             return;
         try
         {
-            using var stream = _tcpClient.GetStream();
-            if (!stream.CanWrite)
-                return;
             var messageAsBytes = Encoding.ASCII.GetBytes(message);
-            stream.Write(messageAsBytes, 0, messageAsBytes.Length);
+            var header = BitConverter.GetBytes(messageAsBytes.Length).Concat(BitConverter.GetBytes((int) MessageType.Other));
+            var fullMessage = header.Concat(messageAsBytes).ToArray();
+            _tcpClient.GetStream().Write(fullMessage, 0, fullMessage.Length);
         }
-        catch (SocketException socketException)
+        catch (Exception exception)
         {
-            Debug.Log(socketException);
+            Debug.Log(exception);
         }
     }
 

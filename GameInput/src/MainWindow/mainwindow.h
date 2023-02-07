@@ -39,6 +39,12 @@ protected:
 
 private slots:
 
+    void clientConnected();
+
+    void clientDisconnected();
+
+    void clientSentResponse(ClientAnswer gameResponse);
+
     void startGameBtnClicked();
 
     void buttonPressed(int id);

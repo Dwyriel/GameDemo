@@ -26,7 +26,10 @@ void MainWindow::assignButtonIDs() {
 }
 
 void MainWindow::connectSignals() {
-    ui->btnStartGame->setEnabled(true);
+    //tcpServer
+    connect(tcpServer, &TcpServer::clientConnected, this, &MainWindow::clientConnected);
+    connect(tcpServer, &TcpServer::clientDisconnected, this, &MainWindow::clientDisconnected);
+    connect(tcpServer, &TcpServer::clientSentResponse, this, &MainWindow::clientSentResponse);
     //Start Game
     connect(ui->btnStartGame, &CustomPushButton::clicked, this, &MainWindow::startGameBtnClicked);
     //Game InputCommands Pressed
@@ -106,6 +109,30 @@ void MainWindow::keyReleaseEvent(QKeyEvent *qKeyEvent) {
         return;
     }
     QWidget::keyReleaseEvent(qKeyEvent);
+}
+
+void MainWindow::clientConnected() {
+    ui->btnStartGame->setEnabled(true);
+    ui->lblCurrentStatus->setText(tr("Connected"));
+}
+
+void MainWindow::clientDisconnected() {
+    ui->btnStartGame->setEnabled(false);
+    ui->lblCurrentStatus->setText(tr("Disconnected"));
+}
+
+void MainWindow::clientSentResponse(ClientAnswer gameResponse) {
+    if(gameResponse.messageType == MessageType::GameResponse)
+        switch (gameResponse.gameResponse) {
+            case GameResponse::GameStarted:
+                ui->lblCurrentStatus->setText(tr("Game is Running"));
+                //todo log
+                break;
+            case GameResponse::GameEnded:
+                ui->lblCurrentStatus->setText(tr("Game Ended"));
+                //todo log
+                break;
+        }
 }
 
 void MainWindow::startGameBtnClicked() {

@@ -41,7 +41,7 @@ signals:
 
     void clientDisconnected();
 
-    void clientSentMessage(GameResponse gameResponse);
+    void clientSentResponse(ClientAnswer gameResponse);
 
 private slots:
 

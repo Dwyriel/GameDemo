@@ -4,14 +4,20 @@
 enum class MessageType : int {
     GameStart = 0,
     Commands = 1,
+    GameResponse = 2,
     Other = 999
+};
+
+enum class GameResponse : int {
+    GameStarted = 0,
+    GameEnded = 1
 };
 
 struct GameStartCommand {
     const int messageLength = sizeof(GameStartCommand) - (sizeof(int) * 2);
-    const MessageType messageType = MessageType::Commands;
+    const MessageType messageType = MessageType::GameStart;
     int discard = 0;
-} __attribute__((packed));
+};
 
 struct InputCommands {
     const int messageLength = sizeof(InputCommands) - (sizeof(int) * 2);
@@ -27,6 +33,15 @@ struct InputCommands {
     bool rotateLeft = false;
 } __attribute__((packed));
 
+struct ClientAnswer {
+    int messageLength = sizeof(ClientAnswer) - (sizeof(int) * 2);
+    MessageType messageType = MessageType::GameResponse;
+    union {
+        char bytes;
+        GameResponse gameResponse = GameResponse::GameEnded;
+    };
+};
+
 /**
  * @attention messageLength should be set to the size of message (message.size())
  */
@@ -34,6 +49,6 @@ struct Message {
     int messageLength = 0;
     MessageType messageType = MessageType::Other;
     QByteArray message;
-} __attribute__((packed));
+};
 
 #endif //GAMEINPUT_MESSAGES_H

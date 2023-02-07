@@ -22,6 +22,7 @@ void TcpServer::connectSignals() {
 
 void TcpServer::ErrorOccurredOnNewConnection(QAbstractSocket::SocketError socketError) {
     qDebug() << "Error occurred when attempting a new connection";
+    //todo log
 }
 
 void TcpServer::newPendingConnection() {
@@ -53,12 +54,36 @@ void TcpServer::socketDisconnected() {
 }
 
 void TcpServer::socketSentMessage() {
-    for (auto &internalTcpSocket: sockets)
+    for (auto &internalTcpSocket: sockets) {
         if (internalTcpSocket.socket->bytesAvailable() > 0) {
-            qDebug() << "internalTcpSocket sent msg:" << internalTcpSocket.socket->readAll();
+            if (internalTcpSocket.socket->bytesAvailable() < 8) {
+                internalTcpSocket.socket->readAll();
+                continue;
+            }
+            char header[sizeof(int) * 2];
+            memset(header, 0, sizeof(header));
+            auto bytesRead = internalTcpSocket.socket->read(header, sizeof(header));
+            if (bytesRead != sizeof(header)) {
+                internalTcpSocket.socket->readAll();
+                continue;
+            }
+            ClientAnswer gameResponse;
+            gameResponse.messageLength = *(int *) header;
+            gameResponse.messageType = (MessageType) (*(int *) (header + sizeof(int)));
+            if(gameResponse.messageType == MessageType::GameResponse) {
+                char message[gameResponse.messageLength];
+                memset(message, 0, gameResponse.messageLength);
+                bytesRead = internalTcpSocket.socket->read(message, gameResponse.messageLength);
+                if (bytesRead != gameResponse.messageLength || gameResponse.messageLength > (sizeof(ClientAnswer) - (sizeof(int) * 2))) {
+                    internalTcpSocket.socket->readAll();
+                    continue;
+                }
+                memcpy(&gameResponse.bytes, message, gameResponse.messageLength);
+                emit clientSentResponse(gameResponse);
+            }
             //todo log
-            //todo deal with message
         }
+    }
 }
 
 void TcpServer::SendStartGameCommand() {
