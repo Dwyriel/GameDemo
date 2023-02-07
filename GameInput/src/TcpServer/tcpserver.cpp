@@ -6,13 +6,13 @@ TcpServer::TcpServer(QObject *parent, quint16 port) : QObject(parent), qTcpServe
 }
 
 TcpServer::~TcpServer() {
+    while (!sockets.empty()) {
+        sockets.last().socket->disconnect();
+        sockets.last().socket->close();
+        sockets.removeLast();
+    }
     qTcpServer->close();
     delete qTcpServer;
-    while (!sockets.empty()) {
-        sockets.first().socket->disconnect();
-        sockets.first().socket->close();
-        sockets.removeFirst();
-    }
 }
 
 void TcpServer::connectSignals() {
@@ -33,6 +33,9 @@ void TcpServer::newPendingConnection() {
     connect(socket, &QTcpSocket::disconnected, this, &TcpServer::socketDisconnected);
     connect(socket, &QTcpSocket::readyRead, this, &TcpServer::socketSentMessage);
     qDebug() << "new socket connected. id:" << idCounter++;
+    if (sockets.size() >= MAX_SOCKET_CONNECTIONS)
+        qTcpServer->pauseAccepting();
+    emit clientConnected();
     //todo log
 }
 
@@ -44,6 +47,9 @@ void TcpServer::socketDisconnected() {
             sockets.removeAt(i--);
             //todo log
         }
+    if (sockets.size() < MAX_SOCKET_CONNECTIONS)
+        qTcpServer->resumeAccepting();
+    emit clientDisconnected();
 }
 
 void TcpServer::socketSentMessage() {

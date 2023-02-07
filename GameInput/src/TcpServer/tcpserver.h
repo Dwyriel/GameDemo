@@ -9,11 +9,12 @@
 #include <QDebug>
 
 #include "../messages.h"
+#include "../defines.h"
 
 class TcpServer : public QObject {
 Q_OBJECT
 public:
-    explicit TcpServer(QObject *parent = nullptr, quint16 port = 7030);
+    explicit TcpServer(QObject *parent = nullptr, quint16 port = SERVER_DEFAULT_PORT);
 
     ~TcpServer() override;
 
@@ -33,6 +34,14 @@ private:
     QList<InternalTcpSocket> sockets;
 
     void connectSignals();
+
+signals:
+
+    void clientConnected();
+
+    void clientDisconnected();
+
+    void clientSentMessage(GameResponse gameResponse);
 
 private slots:
 
