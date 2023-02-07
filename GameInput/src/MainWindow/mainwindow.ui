@@ -47,7 +47,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnMoveForward">
+   <widget class="CustomPushButton" name="btnMoveForward">
     <property name="geometry">
      <rect>
       <x>125</x>
@@ -66,7 +66,7 @@
 (W)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnMoveRight">
+   <widget class="CustomPushButton" name="btnMoveRight">
     <property name="geometry">
      <rect>
       <x>205</x>
@@ -85,7 +85,7 @@
 (D)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnMoveLeft">
+   <widget class="CustomPushButton" name="btnMoveLeft">
     <property name="geometry">
      <rect>
       <x>45</x>
@@ -104,7 +104,7 @@
 (A)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnMoveBackward">
+   <widget class="CustomPushButton" name="btnMoveBackward">
     <property name="geometry">
      <rect>
       <x>125</x>
@@ -144,7 +144,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnFireWeapon">
+   <widget class="CustomPushButton" name="btnFireWeapon">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -163,7 +163,7 @@
 (E or U)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnRotateUp">
+   <widget class="CustomPushButton" name="btnRotateUp">
     <property name="geometry">
      <rect>
       <x>485</x>
@@ -182,7 +182,7 @@
 (I)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnRotateRight">
+   <widget class="CustomPushButton" name="btnRotateRight">
     <property name="geometry">
      <rect>
       <x>565</x>
@@ -201,7 +201,7 @@
 (L)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnRotateLeft">
+   <widget class="CustomPushButton" name="btnRotateLeft">
     <property name="geometry">
      <rect>
       <x>405</x>
@@ -220,7 +220,7 @@
 (J)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnRotateDown">
+   <widget class="CustomPushButton" name="btnRotateDown">
     <property name="geometry">
      <rect>
       <x>485</x>
@@ -239,7 +239,7 @@
 (K)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnStartGame">
+   <widget class="CustomPushButton" name="btnStartGame">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -315,6 +315,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomPushButton</class>
+   <extends>QPushButton</extends>
+   <header>src/CustomPushButton/custompushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>btnMoveForward</tabstop>
   <tabstop>btnMoveLeft</tabstop>
