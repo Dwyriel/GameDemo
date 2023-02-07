@@ -13,9 +13,9 @@
 class TcpServer : public QObject {
 Q_OBJECT
 public:
-    TcpServer(QObject *parent = nullptr, quint16 port = 7030);
+    explicit TcpServer(QObject *parent = nullptr, quint16 port = 7030);
 
-    ~TcpServer();
+    ~TcpServer() override;
 
     void SendMessage(const Message &msg);
 

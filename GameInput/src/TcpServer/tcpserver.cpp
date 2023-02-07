@@ -1,4 +1,4 @@
-#include "TcpServer.h"
+#include "tcpserver.h"
 
 TcpServer::TcpServer(QObject *parent, quint16 port) : QObject(parent), qTcpServer(new QTcpServer(this)) {
     connectSignals();

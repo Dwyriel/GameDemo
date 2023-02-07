@@ -19,8 +19,10 @@ set(PROJECT_SOURCES
         src/MainWindow/mainwindow.cpp
         src/MainWindow/mainwindow.h
         src/MainWindow/mainwindow.ui
-        src/TcpServer/TcpServer.cpp
-        src/TcpServer/TcpServer.h
+        src/TcpServer/tcpserver.cpp
+        src/TcpServer/tcpserver.h
+        src/CustomPushButton/custompushbutton.h
+        src/CustomPushButton/custompushbutton.cpp
         src/messages.h)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
