@@ -23,7 +23,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TcpServer *tcpServer;
-    Commands commands;
+    InputCommands commands;
 
     void assignButtonIDs();
 
@@ -39,7 +39,7 @@ protected:
 
 private slots:
 
-    void buttonClicked();
+    void startGameBtnClicked();
 
     void buttonPressed(int id);
 

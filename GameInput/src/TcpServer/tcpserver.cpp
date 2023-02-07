@@ -55,9 +55,17 @@ void TcpServer::socketSentMessage() {
         }
 }
 
-void TcpServer::SendCommands(Commands &commands) {
+void TcpServer::SendStartGameCommand() {
+    GameStartCommand gameStartCommand;
     for (auto &internalTcpSocket: sockets) {
-        internalTcpSocket.socket->write((char *) &commands, sizeof(Commands));
+        internalTcpSocket.socket->write((char *) &gameStartCommand, sizeof(GameStartCommand));
+        internalTcpSocket.socket->flush();
+    }
+}
+
+void TcpServer::SendInputCommands(InputCommands &msg) {
+    for (auto &internalTcpSocket: sockets) {
+        internalTcpSocket.socket->write((char *) &msg, sizeof(InputCommands));
         internalTcpSocket.socket->flush();
     }
     //todo log

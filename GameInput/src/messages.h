@@ -2,14 +2,20 @@
 #define GAMEINPUT_MESSAGES_H
 
 enum class MessageType : int {
-    Commands = 0,
+    GameStart = 0,
+    Commands = 1,
     Other = 999
 };
 
-struct Commands {
-    const int messageLength = sizeof(Commands) - (sizeof(int) * 2);
+struct GameStartCommand {
+    const int messageLength = sizeof(GameStartCommand) - (sizeof(int) * 2);
     const MessageType messageType = MessageType::Commands;
-    bool startGame = false;
+    int discard = 0;
+} __attribute__((packed));
+
+struct InputCommands {
+    const int messageLength = sizeof(InputCommands) - (sizeof(int) * 2);
+    const MessageType messageType = MessageType::Commands;
     bool fireWeapon = false;
     bool moveForward = false;
     bool moveRight = false;

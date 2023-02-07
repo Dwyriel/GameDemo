@@ -17,9 +17,11 @@ public:
 
     ~TcpServer() override;
 
-    void SendMessage(const Message &msg);
+    void SendStartGameCommand();
 
-    void SendCommands(Commands &msg);
+    void SendInputCommands(InputCommands &msg);
+
+    void SendMessage(const Message &msg);
 
 private:
     struct InternalTcpSocket {

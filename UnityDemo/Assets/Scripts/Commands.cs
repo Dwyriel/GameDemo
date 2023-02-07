@@ -1,12 +1,12 @@
 enum MessageType
 {
-    Commands = 0,
+    GameStart = 0,
+    Inputs = 1,
     Other = 999
 }
 
-public class Commands
+public class InputCommands
 {
-    public bool StartGame = false;
     public bool FireWeapon = false;
     public bool MoveForward = false;
     public bool MoveRight = false;

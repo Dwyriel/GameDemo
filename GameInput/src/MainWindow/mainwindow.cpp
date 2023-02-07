@@ -28,8 +28,8 @@ void MainWindow::assignButtonIDs() {
 void MainWindow::connectSignals() {
     ui->btnStartGame->setEnabled(true);
     //Start Game
-    connect(ui->btnStartGame, &QPushButton::clicked, this, &MainWindow::buttonClicked);
-    //Game Commands Pressed
+    connect(ui->btnStartGame, &CustomPushButton::clicked, this, &MainWindow::startGameBtnClicked);
+    //Game InputCommands Pressed
     connect(ui->btnMoveForward, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
     connect(ui->btnMoveRight, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
     connect(ui->btnMoveBackward, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
@@ -39,7 +39,7 @@ void MainWindow::connectSignals() {
     connect(ui->btnRotateDown, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
     connect(ui->btnRotateLeft, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
     connect(ui->btnFireWeapon, &CustomPushButton::buttonPressed, this, &MainWindow::buttonPressed);
-    //Game Commands Released
+    //Game InputCommands Released
     connect(ui->btnMoveForward, &CustomPushButton::buttonReleased, this, &MainWindow::buttonReleased);
     connect(ui->btnMoveRight, &CustomPushButton::buttonReleased, this, &MainWindow::buttonReleased);
     connect(ui->btnMoveBackward, &CustomPushButton::buttonReleased, this, &MainWindow::buttonReleased);
@@ -91,7 +91,7 @@ void MainWindow::keyPressEvent(QKeyEvent *qKeyEvent) {
     if (!qKeyEvent->isAutoRepeat())
         handled = updateCommands(qKeyEvent->key(), true);
     if (handled) {
-        tcpServer->SendCommands(commands);
+        tcpServer->SendInputCommands(commands);
         return;
     }
     QWidget::keyPressEvent(qKeyEvent);
@@ -102,22 +102,22 @@ void MainWindow::keyReleaseEvent(QKeyEvent *qKeyEvent) {
     if (!qKeyEvent->isAutoRepeat())
         handled = updateCommands(qKeyEvent->key(), false);
     if (handled) {
-        tcpServer->SendCommands(commands);
+        tcpServer->SendInputCommands(commands);
         return;
     }
     QWidget::keyReleaseEvent(qKeyEvent);
 }
 
-void MainWindow::buttonClicked() {
-    //todo start game
+void MainWindow::startGameBtnClicked() {
+    tcpServer->SendStartGameCommand();
 }
 
 void MainWindow::buttonPressed(int id) {
     updateCommands(id, true);
-    tcpServer->SendCommands(commands);
+    tcpServer->SendInputCommands(commands);
 }
 
 void MainWindow::buttonReleased(int id) {
     updateCommands(id, false);
-    tcpServer->SendCommands(commands);
+    tcpServer->SendInputCommands(commands);
 }

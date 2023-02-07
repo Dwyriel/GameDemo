@@ -16,7 +16,7 @@ public class TcpClientScript : MonoBehaviour
     private TcpClient _tcpClient;
     private Thread _clientThread;
 
-    public Commands Commands { get; } = new();
+    public InputCommands InputCommands { get; } = new();
     public bool MessageAvailable => _messages.Count > 0;
 
     public string GetOldestMessage
@@ -94,22 +94,20 @@ public class TcpClientScript : MonoBehaviour
                     }
                     var messageLength = BitConverter.ToInt32(header, 0);
                     var messageType = (MessageType) BitConverter.ToInt32(header, 0 + sizeof(int));
-                    if (messageLength == 0)
-                    {
-                        failedConnectionCounter++;
-                        continue;
-                    }
                     switch (messageType)
                     {
-                        case MessageType.Commands:
-                            var commands = new byte[messageLength];
-                            length = networkStream.Read(commands, 0, messageLength);
-                            Debug.Log(length);
-                            if (length == messageLength)
-                            {
-                                failedConnectionCounter = 0;
-                                UpdateCommands(commands);
-                            }
+                        case MessageType.GameStart:
+                            var gameStartData = new byte[messageLength];
+                            length = networkStream.Read(gameStartData, 0, messageLength);
+                            //todo
+                            break;
+                        case MessageType.Inputs:
+                            var inputs = new byte[messageLength];
+                            length = networkStream.Read(inputs, 0, messageLength);
+                            if (length != messageLength)
+                                continue;
+                            failedConnectionCounter = 0;
+                            UpdateInputCommands(inputs);
                             break;
                         case MessageType.Other:
                             var message = new byte[messageLength];
@@ -156,18 +154,17 @@ public class TcpClientScript : MonoBehaviour
         }
     }
 
-    private void UpdateCommands(byte[] commands)
+    private void UpdateInputCommands(byte[] commands)
     {
         var index = 0;
-        Commands.StartGame = BitConverter.ToBoolean(commands, index++);
-        Commands.FireWeapon = BitConverter.ToBoolean(commands, index++);
-        Commands.MoveForward = BitConverter.ToBoolean(commands, index++);
-        Commands.MoveRight = BitConverter.ToBoolean(commands, index++);
-        Commands.MoveBackward = BitConverter.ToBoolean(commands, index++);
-        Commands.MoveLeft = BitConverter.ToBoolean(commands, index++);
-        Commands.RotateUp = BitConverter.ToBoolean(commands, index++);
-        Commands.RotateRight = BitConverter.ToBoolean(commands, index++);
-        Commands.RotateDown = BitConverter.ToBoolean(commands, index++);
-        Commands.RotateLeft = BitConverter.ToBoolean(commands, index);
+        InputCommands.FireWeapon = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveForward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveBackward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveLeft = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateUp = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateDown = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateLeft = BitConverter.ToBoolean(commands, index);
     }
 }
