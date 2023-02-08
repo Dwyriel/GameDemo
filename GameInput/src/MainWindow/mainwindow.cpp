@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), tcpServer(new TcpServer(this)) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), tcpServer(new TcpServer(this)), logger(Logger::Instance()) {
+    logger->writeLog("Starting GameInput GUI");
     ui->setupUi(this);
     assignButtonIDs();
     connectSignals();
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
     delete ui;
     delete tcpServer;
+    logger->writeLog("Closing GameInput");
 }
 
 void MainWindow::assignButtonIDs() {
@@ -125,12 +127,14 @@ void MainWindow::clientSentResponse(ClientAnswer gameResponse) {
     if(gameResponse.messageType == MessageType::GameResponse)
         switch (gameResponse.gameResponse) {
             case GameResponse::GameStarted:
+                ui->btnStartGame->setEnabled(false);
                 ui->lblCurrentStatus->setText(tr("Game is Running"));
-                //todo log
+                logger->writeLog("Client said: Unity scene is running");
                 break;
             case GameResponse::GameEnded:
+                ui->btnStartGame->setEnabled(true);
                 ui->lblCurrentStatus->setText(tr("Game Ended"));
-                //todo log
+                logger->writeLog("Client said: Unity scene has ended");
                 break;
         }
 }

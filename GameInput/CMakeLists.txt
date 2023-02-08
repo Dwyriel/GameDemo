@@ -16,15 +16,17 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Concurren
 
 set(PROJECT_SOURCES
         main.cpp
+        src/defines.h
+        src/messages.h
         src/MainWindow/mainwindow.cpp
         src/MainWindow/mainwindow.h
         src/MainWindow/mainwindow.ui
         src/TcpServer/tcpserver.cpp
         src/TcpServer/tcpserver.h
-        src/CustomPushButton/custompushbutton.h
         src/CustomPushButton/custompushbutton.cpp
-        src/defines.h
-        src/messages.h )
+        src/CustomPushButton/custompushbutton.h
+        src/Logger/Logger.cpp
+        src/Logger/Logger.h)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GameInput

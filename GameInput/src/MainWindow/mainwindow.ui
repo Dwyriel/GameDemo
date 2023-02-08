@@ -160,7 +160,7 @@
     </property>
     <property name="text">
      <string>Fire Weapon
-(E or U)</string>
+(Space)</string>
     </property>
    </widget>
    <widget class="CustomPushButton" name="btnRotateUp">
