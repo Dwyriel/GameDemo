@@ -5,8 +5,9 @@
 #include <QPushButton>
 #include <QKeyEvent>
 
-#include "src/TcpServer/tcpserver.h"
 #include "src/CustomPushButton/custompushbutton.h"
+#include "src/TcpServer/tcpserver.h"
+#include "src/Logger/Logger.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TcpServer *tcpServer;
+    Logger *logger;
     InputCommands commands;
 
     void assignButtonIDs();

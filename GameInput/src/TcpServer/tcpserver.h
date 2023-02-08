@@ -6,10 +6,10 @@
 #include <QTcpSocket>
 #include <QList>
 #include <QString>
-#include <QDebug>
 
 #include "../messages.h"
 #include "../defines.h"
+#include "src/Logger/Logger.h"
 
 class TcpServer : public QObject {
 Q_OBJECT
@@ -32,6 +32,7 @@ private:
     quint64 idCounter = 0;
     QTcpServer *qTcpServer;
     QList<InternalTcpSocket> sockets;
+    Logger *logger;
 
     void connectSignals();
 
