@@ -5,12 +5,13 @@ public enum MessageType
     GameStart = 0,
     Inputs = 1,
     GameResponse = 2,
+    GameStats = 3,
     Other = 999
 }
 
 public enum GameResponse
 {
-    GameStarted  = 0,
+    GameStarted = 0,
     GameEnded = 1
 }
 
@@ -27,14 +28,29 @@ public class InputCommands
     public bool RotateLeft = false;
 }
 
-[StructLayout(LayoutKind.Explicit, Pack=1)]
+[StructLayout(LayoutKind.Explicit, Pack = 1)]
 public struct ClientAnswer
 {
-    [FieldOffset(0)]
-    public int MessageLength;
-    [FieldOffset(4)]
-    public MessageType MessageType;
-    [FieldOffset(8)]
-    public GameResponse GameResponse;
+    #region Header
+
+    [FieldOffset(0)] public int MessageLength;
+    [FieldOffset(4)] public MessageType MessageType;
+
+    #endregion
+
+    #region GameResponse
+
+    [FieldOffset(8)] public GameResponse GameResponse;
+
+    #endregion
+
+    #region GameStats
+
+    [FieldOffset(8)] public int elapsedTime;
+    [FieldOffset(12)] public int shotsFired;
+    [FieldOffset(16)] public int targetsHit;
+
+    #endregion
+
     //other fields should also have an offset of 8
 }
