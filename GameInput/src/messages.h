@@ -5,6 +5,7 @@ enum class MessageType : int {
     GameStart = 0,
     Commands = 1,
     GameResponse = 2,
+    GameStats = 3,
     Other = 999
 };
 
@@ -33,12 +34,19 @@ struct InputCommands {
     bool rotateLeft = false;
 } __attribute__((packed));
 
+struct GameStats {
+    int elapsedTime;
+    int shotsFired;
+    int targetsHit;
+};
+
 struct ClientAnswer {
     int messageLength = sizeof(ClientAnswer) - (sizeof(int) * 2);
     MessageType messageType = MessageType::GameResponse;
     union {
         char bytes;
         GameResponse gameResponse = GameResponse::GameEnded;
+        GameStats gameStats;
     };
 };
 

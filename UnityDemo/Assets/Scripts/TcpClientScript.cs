@@ -140,8 +140,15 @@ public class TcpClientScript : MonoBehaviour
             return;
         try
         {
-            var header = BitConverter.GetBytes(answer.MessageLength).Concat(BitConverter.GetBytes((int)answer.MessageType));
-            var message = header.Concat(BitConverter.GetBytes((int) answer.GameResponse)).ToArray();
+            var header = BitConverter.GetBytes(answer.MessageLength).Concat(BitConverter.GetBytes((int) answer.MessageType));
+            var message = answer.MessageType switch
+            {
+                MessageType.GameResponse => header.Concat(BitConverter.GetBytes((int) answer.GameResponse)).ToArray(),
+                MessageType.GameStats => header.Concat(BitConverter.GetBytes(answer.elapsedTime)).Concat(BitConverter.GetBytes(answer.shotsFired)).Concat(BitConverter.GetBytes(answer.targetsHit)).ToArray(),
+                _ => null
+            };
+            if (message is null)
+                return;
             _tcpClient.GetStream().Write(message, 0, message.Length);
         }
         catch (Exception exception)

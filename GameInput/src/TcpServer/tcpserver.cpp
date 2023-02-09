@@ -70,24 +70,38 @@ void TcpServer::socketSentMessage() {
             ClientAnswer clientAnswer;
             clientAnswer.messageLength = *(int *) header;
             clientAnswer.messageType = (MessageType) (*(int *) (header + sizeof(int)));
-            if(clientAnswer.messageType == MessageType::GameResponse) {
-                char message[clientAnswer.messageLength];
-                memset(message, 0, clientAnswer.messageLength);
-                bytesRead = internalTcpSocket.socket->read(message, clientAnswer.messageLength);
-                if (bytesRead != clientAnswer.messageLength || clientAnswer.messageLength > (sizeof(ClientAnswer) - (sizeof(int) * 2))) {
-                    internalTcpSocket.socket->readAll();
-                    continue;
-                }
-                memcpy(&clientAnswer.bytes, message, clientAnswer.messageLength);
-                emit clientSentResponse(clientAnswer);
+            auto expectedMessageLength = calculateExpectedMessageLength(clientAnswer.messageType);
+            if (clientAnswer.messageLength != expectedMessageLength) {
+                internalTcpSocket.socket->readAll();
+                continue;
             }
+            char message[clientAnswer.messageLength];
+            memset(message, 0, clientAnswer.messageLength);
+            bytesRead = internalTcpSocket.socket->read(message, clientAnswer.messageLength);
+            if (bytesRead != clientAnswer.messageLength) {
+                internalTcpSocket.socket->readAll();
+                continue;
+            }
+            memcpy(&clientAnswer.bytes, message, clientAnswer.messageLength);
+            emit clientSentResponse(clientAnswer);
         }
+    }
+}
+
+size_t TcpServer::calculateExpectedMessageLength(MessageType messageType) {
+    switch (messageType) {
+        case MessageType::GameResponse:
+            return sizeof(ClientAnswer::gameResponse);
+        case MessageType::GameStats:
+            return sizeof(ClientAnswer::gameStats);
+        default:
+            return 0;
     }
 }
 
 void TcpServer::SendStartGameCommand() {
     GameStartCommand gameStartCommand;
-    QString representation = Logger::bytesToHexRepresentation((char *)&gameStartCommand, sizeof(GameStartCommand));
+    QString representation = Logger::bytesToHexRepresentation((char *) &gameStartCommand, sizeof(GameStartCommand));
     logger->writeLog("Sending start game command to all connected clients, binary data: " + representation);
     for (auto &internalTcpSocket: sockets) {
         internalTcpSocket.socket->write((char *) &gameStartCommand, sizeof(GameStartCommand));
@@ -96,7 +110,7 @@ void TcpServer::SendStartGameCommand() {
 }
 
 void TcpServer::SendInputCommands(InputCommands &msg) {
-    QString representation = Logger::bytesToHexRepresentation((char *)&msg, sizeof(InputCommands));
+    QString representation = Logger::bytesToHexRepresentation((char *) &msg, sizeof(InputCommands));
     logger->writeLog("Sending input commands to all connected clients, binary data: " + representation);
     for (auto &internalTcpSocket: sockets) {
         internalTcpSocket.socket->write((char *) &msg, sizeof(InputCommands));

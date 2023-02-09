@@ -36,6 +36,8 @@ private:
 
     void connectSignals();
 
+    static size_t calculateExpectedMessageLength(MessageType messageType);
+
 signals:
 
     void clientConnected();
