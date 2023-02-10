@@ -57,7 +57,7 @@ public class PlayerScript : MonoBehaviour
             rotationSpeed += -90;
         if (Input.GetKey(KeyCode.RightArrow))
             rotationSpeed += 90;
-        turret.transform.Rotate(Vector3.up, rotationSpeed * Time.fixedDeltaTime, Space.World);
+        turret.transform.Rotate(Vector3.up, rotationSpeed * Time.fixedDeltaTime, Space.Self);
     }
 
     private void BarrelRotation()
@@ -67,12 +67,12 @@ public class PlayerScript : MonoBehaviour
             rotationSpeed += 30;
         if (Input.GetKey(KeyCode.DownArrow))
             rotationSpeed += -30;
-        var eulerAngles = barrel.transform.eulerAngles;
+        var eulerAngles = barrel.transform.localEulerAngles;
         eulerAngles.z += rotationSpeed * Time.fixedDeltaTime;
         if (eulerAngles.z < _barrelMinAngle && eulerAngles.z > _barrelAngleMiddleGround)
             eulerAngles.z = _barrelMinAngle;
         if (eulerAngles.z > _barrelMaxAngle && eulerAngles.z <= _barrelAngleMiddleGround)
             eulerAngles.z = _barrelMaxAngle;
-        barrel.transform.rotation = Quaternion.Euler(eulerAngles);
+        barrel.transform.localRotation = Quaternion.Euler(eulerAngles);
     }
 }
