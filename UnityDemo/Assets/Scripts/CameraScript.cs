@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Camera : MonoBehaviour
+public class CameraScript : MonoBehaviour
 {
     [SerializeField] private GameObject cameraTurretAnchor;
     [SerializeField] private GameObject cameraBarrelAnchor;
@@ -10,7 +10,7 @@ public class Camera : MonoBehaviour
     [SerializeField] private float positionReductionWhenLookingUp = 2.65f;
     [SerializeField] private float positionReductionWhenLookingDown = 3f;
 
-    void Update()
+    private void Update()
     {
         var turretAnchorPos = cameraTurretAnchor.transform.position;
         var barrelAnchorPos = cameraBarrelAnchor.transform.position;

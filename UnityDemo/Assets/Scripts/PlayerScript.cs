@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -15,7 +12,7 @@ public class PlayerScript : MonoBehaviour
     private float _barrelMaxAngle;
     private float _barrelMinAngle;
 
-    void Start()
+    private void Start()
     {
         if (barrelMaxAngle < barrelMinAngle)
             (barrelMaxAngle, barrelMinAngle) = (barrelMinAngle, barrelMaxAngle);
@@ -25,7 +22,7 @@ public class PlayerScript : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         TankMovement();
         TurretRotation();
@@ -63,9 +60,9 @@ public class PlayerScript : MonoBehaviour
     private void BarrelRotation()
     {
         var rotationSpeed = 0;
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (TcpClientScript.Instance.InputCommands.RotateUp || Input.GetKey(KeyCode.UpArrow))
             rotationSpeed += 30;
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (TcpClientScript.Instance.InputCommands.RotateDown || Input.GetKey(KeyCode.DownArrow))
             rotationSpeed += -30;
         var eulerAngles = barrel.transform.localEulerAngles;
         eulerAngles.z += rotationSpeed * Time.fixedDeltaTime;
