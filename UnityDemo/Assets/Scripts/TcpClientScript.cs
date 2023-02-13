@@ -30,6 +30,7 @@ public class TcpClientScript : MonoBehaviour
     }
 
     public static TcpClientScript Instance { get; private set; }
+    public static bool IsConnected = false;
 
     private void Awake()
     {
@@ -74,9 +75,11 @@ public class TcpClientScript : MonoBehaviour
         {
             try
             {
+                IsConnected = false;
                 _tcpClient?.Close();
-                _tcpClient = new TcpClient("localhost", 7030);
+                _tcpClient = new TcpClient(ConstValues.IpAddress, ConstValues.Port);
                 using var networkStream = _tcpClient.GetStream();
+                IsConnected = true;
                 var failedConnectionCounter = 0;
                 while (true)
                 {
@@ -120,14 +123,17 @@ public class TcpClientScript : MonoBehaviour
             }
             catch (System.IO.IOException)
             {
+                IsConnected = false;
                 break;
             }
             catch (ThreadAbortException)
             {
+                IsConnected = false;
                 break;
             }
             catch (Exception exception)
             {
+                IsConnected = false;
                 Debug.Log(exception);
                 Thread.Sleep(TimeBetweenReconnectAttemptsMilliseconds);
             }
