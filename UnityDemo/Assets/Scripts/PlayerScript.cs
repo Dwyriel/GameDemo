@@ -20,6 +20,7 @@ public class PlayerScript : MonoBehaviour
         _barrelMinAngle = barrelMinAngle < 0 ? 360 + barrelMinAngle : barrelMinAngle;
         _barrelAngleMiddleGround = (Mathf.Max(_barrelMaxAngle, _barrelMinAngle) - Mathf.Min(_barrelMinAngle, _barrelMaxAngle)) / 2;
         _rigidbody = GetComponent<Rigidbody>();
+        ConstValuesAndUtility.AddTag(transform, ConstValuesAndUtility.PlayerTag);
     }
 
     private void FixedUpdate()
