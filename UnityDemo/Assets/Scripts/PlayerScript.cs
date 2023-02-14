@@ -1,16 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject turret;
     [SerializeField] private GameObject barrel;
+    [SerializeField] private GameObject barrelTip;
+    [SerializeField] private GameObject barrelBase;
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField, Range(-360f, 360f)] private float barrelMaxAngle;
     [SerializeField, Range(-360f, 360f)] private float barrelMinAngle;
+    [SerializeField, Min(0)] private float shootCooldown = .2f;
 
     private Rigidbody _rigidbody;
     private float _barrelAngleMiddleGround;
     private float _barrelMaxAngle;
     private float _barrelMinAngle;
+    private bool _playerCanShoot = true;
+    private Coroutine _shootCooldownCoroutine;
 
     private void Start()
     {
@@ -28,6 +35,7 @@ public class PlayerScript : MonoBehaviour
         TankMovement();
         TurretRotation();
         BarrelRotation();
+        Shoot();
     }
 
     private void TankMovement()
@@ -72,5 +80,24 @@ public class PlayerScript : MonoBehaviour
         if (eulerAngles.z > _barrelMaxAngle && eulerAngles.z <= _barrelAngleMiddleGround)
             eulerAngles.z = _barrelMaxAngle;
         barrel.transform.localRotation = Quaternion.Euler(eulerAngles);
+    }
+
+    private void Shoot()
+    {
+        if(!_playerCanShoot || !Input.GetKey(KeyCode.Space))
+            return;
+        var barrelTipPosition = barrelTip.transform.position;
+        var barrelBasePosition = barrelBase.transform.position;
+        Instantiate(bulletPrefab, barrelTipPosition, Quaternion.LookRotation(barrelTipPosition - barrelBasePosition));
+        _playerCanShoot = false;
+        if (_shootCooldownCoroutine != null)
+            StopCoroutine(_shootCooldownCoroutine);
+        _shootCooldownCoroutine = StartCoroutine(ShootCooldown());
+    }
+
+    private IEnumerator ShootCooldown()
+    {
+        yield return new WaitForSeconds(shootCooldown);
+        _playerCanShoot = true;
     }
 }
