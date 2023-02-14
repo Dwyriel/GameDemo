@@ -39,6 +39,7 @@ public class TcpClientScript : MonoBehaviour
             Destroy(this);
             return;
         }
+        DontDestroyOnLoad(gameObject);
         Instance = this;
     }
 
@@ -77,7 +78,7 @@ public class TcpClientScript : MonoBehaviour
             {
                 IsConnected = false;
                 _tcpClient?.Close();
-                _tcpClient = new TcpClient(ConstValues.IpAddress, ConstValues.Port);
+                _tcpClient = new TcpClient(ConstValuesAndUtility.IpAddress, ConstValuesAndUtility.Port);
                 using var networkStream = _tcpClient.GetStream();
                 IsConnected = true;
                 var failedConnectionCounter = 0;

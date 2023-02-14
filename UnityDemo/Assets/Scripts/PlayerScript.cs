@@ -1,21 +1,25 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField] private GameObject turret;
     [SerializeField] private GameObject barrel;
+    [SerializeField] private GameObject barrelTip;
+    [SerializeField] private GameObject barrelBase;
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField, Range(-360f, 360f)] private float barrelMaxAngle;
     [SerializeField, Range(-360f, 360f)] private float barrelMinAngle;
+    [SerializeField, Min(0)] private float shootCooldown = .2f;
 
     private Rigidbody _rigidbody;
     private float _barrelAngleMiddleGround;
     private float _barrelMaxAngle;
     private float _barrelMinAngle;
+    private bool _playerCanShoot = true;
+    private Coroutine _shootCooldownCoroutine;
 
-    void Start()
+    private void Start()
     {
         if (barrelMaxAngle < barrelMinAngle)
             (barrelMaxAngle, barrelMinAngle) = (barrelMinAngle, barrelMaxAngle);
@@ -23,13 +27,15 @@ public class PlayerScript : MonoBehaviour
         _barrelMinAngle = barrelMinAngle < 0 ? 360 + barrelMinAngle : barrelMinAngle;
         _barrelAngleMiddleGround = (Mathf.Max(_barrelMaxAngle, _barrelMinAngle) - Mathf.Min(_barrelMinAngle, _barrelMaxAngle)) / 2;
         _rigidbody = GetComponent<Rigidbody>();
+        ConstValuesAndUtility.AddTag(transform, ConstValuesAndUtility.PlayerTag);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         TankMovement();
         TurretRotation();
         BarrelRotation();
+        Shoot();
     }
 
     private void TankMovement()
@@ -63,9 +69,9 @@ public class PlayerScript : MonoBehaviour
     private void BarrelRotation()
     {
         var rotationSpeed = 0;
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (TcpClientScript.Instance.InputCommands.RotateUp || Input.GetKey(KeyCode.UpArrow))
             rotationSpeed += 30;
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (TcpClientScript.Instance.InputCommands.RotateDown || Input.GetKey(KeyCode.DownArrow))
             rotationSpeed += -30;
         var eulerAngles = barrel.transform.localEulerAngles;
         eulerAngles.z += rotationSpeed * Time.fixedDeltaTime;
@@ -74,5 +80,24 @@ public class PlayerScript : MonoBehaviour
         if (eulerAngles.z > _barrelMaxAngle && eulerAngles.z <= _barrelAngleMiddleGround)
             eulerAngles.z = _barrelMaxAngle;
         barrel.transform.localRotation = Quaternion.Euler(eulerAngles);
+    }
+
+    private void Shoot()
+    {
+        if(!_playerCanShoot || !Input.GetKey(KeyCode.Space))
+            return;
+        var barrelTipPosition = barrelTip.transform.position;
+        var barrelBasePosition = barrelBase.transform.position;
+        Instantiate(bulletPrefab, barrelTipPosition, Quaternion.LookRotation(barrelTipPosition - barrelBasePosition));
+        _playerCanShoot = false;
+        if (_shootCooldownCoroutine != null)
+            StopCoroutine(_shootCooldownCoroutine);
+        _shootCooldownCoroutine = StartCoroutine(ShootCooldown());
+    }
+
+    private IEnumerator ShootCooldown()
+    {
+        yield return new WaitForSeconds(shootCooldown);
+        _playerCanShoot = true;
     }
 }
