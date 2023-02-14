@@ -39,6 +39,7 @@ public class TcpClientScript : MonoBehaviour
             Destroy(this);
             return;
         }
+        DontDestroyOnLoad(gameObject);
         Instance = this;
     }
 

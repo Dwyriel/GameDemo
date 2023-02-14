@@ -172,8 +172,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turret: {fileID: 648204052195602197}
   barrel: {fileID: 1172632619459522841}
-  barrelMaxAngle: 0
-  barrelMinAngle: 0
+  barrelTip: {fileID: 7976398284046555224}
+  barrelBase: {fileID: 4767041115266907565}
+  bulletPrefab: {fileID: 3864268870478126534, guid: 9dfd2923962a7d391a94add094851077, type: 3}
+  barrelMaxAngle: 60
+  barrelMinAngle: -10
+  shootCooldown: 0.2
 --- !u!54 &3327832312683843128
 Rigidbody:
   m_ObjectHideFlags: 0
