@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 1346165233952189794}
   - component: {fileID: 1684532950681890077}
   m_Layer: 0
-  m_Name: Scenary
+  m_Name: ScenaryPrefab
   m_TagString: Scenario
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
