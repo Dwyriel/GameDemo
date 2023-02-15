@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,14 @@ using UnityEngine.UI;
 
 public class GameSceneManager : MonoBehaviour
 {
+    #region Events
+
+    public delegate void GameOverEventHandler();
+
+    public event GameOverEventHandler GameOverEvent;
+
+    #endregion
+    
     [SerializeField] private Text connectionLostUIText;
     [SerializeField] private Text elapsedTimeText;
     [SerializeField] private GameObject mapCenter;
@@ -36,16 +45,17 @@ public class GameSceneManager : MonoBehaviour
         if (_elapsedTime <= ConstValuesAndUtility.MaxRoundTime && _remainingEnemies != 0) 
             return;
         _shouldRunUpdate = false;
+        GameOverEvent?.Invoke();
         var clientAnswer = new ClientAnswer
         {
             MessageLength = sizeof(int) * 3,
-            MessageType = MessageType.GameResponse,
-            ElapsedTime = (int) _elapsedTime * 1000,
+            MessageType = MessageType.GameStats,
+            ElapsedTime = (int) (_elapsedTime * 1000f),
             ShotsFired = _shotsFired,
             TargetsHit = ConstValuesAndUtility.NumberOfEnemiesToSpawn - _remainingEnemies
         };
         TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
-        SceneManager.LoadSceneAsync("Scenes/IdleScene");
+        StartCoroutine(LoadIdleScene());
     }
 
     private void SpawnEnemies()
@@ -70,5 +80,18 @@ public class GameSceneManager : MonoBehaviour
     private void EnemyDestroyed()
     {
         _remainingEnemies--;
+    }
+
+    private IEnumerator LoadIdleScene()
+    {
+        yield return new WaitForSeconds(ConstValuesAndUtility.DelayBeforeLoadingIdleScene);
+        var clientAnswer = new ClientAnswer
+        {
+            MessageLength = sizeof(int),
+            MessageType = MessageType.GameResponse,
+            GameResponse = GameResponse.GameEnded
+        };
+        TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
+        SceneManager.LoadSceneAsync("Scenes/IdleScene");
     }
 }

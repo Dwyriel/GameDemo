@@ -22,6 +22,7 @@ public class PlayerScript : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private InputCommands _inputCommands;
+    private bool _hasControl = true;
     private float _barrelAngleMiddleGround;
     private float _barrelMaxAngle;
     private float _barrelMinAngle;
@@ -30,22 +31,30 @@ public class PlayerScript : MonoBehaviour
 
     private void Start()
     {
-        if (barrelMaxAngle < barrelMinAngle)
-            (barrelMaxAngle, barrelMinAngle) = (barrelMinAngle, barrelMaxAngle);
-        _barrelMaxAngle = barrelMaxAngle < 0 ? 360 + barrelMaxAngle : barrelMaxAngle;
-        _barrelMinAngle = barrelMinAngle < 0 ? 360 + barrelMinAngle : barrelMinAngle;
-        _barrelAngleMiddleGround = (Mathf.Max(_barrelMaxAngle, _barrelMinAngle) - Mathf.Min(_barrelMinAngle, _barrelMaxAngle)) / 2;
+        CalculateCorrectAngles();
         _rigidbody = GetComponent<Rigidbody>();
+        FindObjectOfType<GameSceneManager>().GameOverEvent += GameOverEvent;
         ConstValuesAndUtility.AddTag(transform, ConstValuesAndUtility.PlayerTag);
     }
 
     private void FixedUpdate()
     {
+        if(!_hasControl)
+            return;
         _inputCommands = TcpClientScript.Instance.InputCommands;
         TankMovement();
         TurretRotation();
         BarrelRotation();
         Shoot();
+    }
+
+    private void CalculateCorrectAngles()
+    {
+        if (barrelMaxAngle < barrelMinAngle)
+            (barrelMaxAngle, barrelMinAngle) = (barrelMinAngle, barrelMaxAngle);
+        _barrelMaxAngle = barrelMaxAngle < 0 ? 360 + barrelMaxAngle : barrelMaxAngle;
+        _barrelMinAngle = barrelMinAngle < 0 ? 360 + barrelMinAngle : barrelMinAngle;
+        _barrelAngleMiddleGround = (Mathf.Max(_barrelMaxAngle, _barrelMinAngle) - Mathf.Min(_barrelMinAngle, _barrelMaxAngle)) / 2;
     }
 
     private void TankMovement()
@@ -110,5 +119,10 @@ public class PlayerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(shootCooldown);
         _playerCanShoot = true;
+    }
+
+    private void GameOverEvent()
+    {
+        _hasControl = false;
     }
 }

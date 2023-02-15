@@ -10,7 +10,8 @@ enum class MessageType : int {
 };
 
 enum class GameResponse : int {
-    GameStarted = 0
+    GameStarted = 0,
+    GameEnded = 1
 };
 
 struct GameStartCommand {

@@ -4,7 +4,8 @@ public static class ConstValuesAndUtility
 {
     public const string IpAddress = "127.0.0.1";
     public const int Port = 7030;
-    public const float DelayBeforeLoadingScene = 2f;
+    public const float DelayBeforeLoadingGameScene = 2f;
+    public const float DelayBeforeLoadingIdleScene = 5f;
     public const int NumberOfEnemiesToSpawn = 3;
     public const float MaxRoundTime = 120f;
 

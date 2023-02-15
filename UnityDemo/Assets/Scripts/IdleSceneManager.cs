@@ -44,7 +44,7 @@ public class IdleSceneManager : MonoBehaviour
         asyncOperation.allowSceneActivation = false;
         _isGameStarting = true;
         connectionStatusUIText.text = "Starting Game";
-        yield return new WaitForSeconds(ConstValuesAndUtility.DelayBeforeLoadingScene);
+        yield return new WaitForSeconds(ConstValuesAndUtility.DelayBeforeLoadingGameScene);
         while (asyncOperation.progress < .9f)
             yield return null;
         var clientAnswer = new ClientAnswer

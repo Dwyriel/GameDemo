@@ -11,7 +11,7 @@ public class TcpClientScript : MonoBehaviour
     private const int HeaderSize = sizeof(int) * 2;
     private const int TimeBetweenReconnectAttemptsMilliseconds = 2000;
     private const int TimeBetweenReadAttemptsMilliseconds = 10;
-    private const int MaxFailedReadAttemptsBeforeEndingConnection = 500;
+    private const int MaxFailedReadAttemptsBeforeEndingConnection = 10;
     private readonly List<string> _messages = new();
     private TcpClient _tcpClient;
     private Thread _clientThread;

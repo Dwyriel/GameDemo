@@ -124,19 +124,23 @@ void MainWindow::clientDisconnected() {
 }
 
 void MainWindow::clientSentResponse(ClientAnswer clientAnswer) {
-    if(clientAnswer.messageType == MessageType::GameResponse)
+    if (clientAnswer.messageType == MessageType::GameResponse)
         switch (clientAnswer.gameResponse) {
             case GameResponse::GameStarted:
                 ui->btnStartGame->setEnabled(false);
                 ui->lblCurrentStatus->setText(tr("Game is Running"));
                 logger->writeLog("Client said: Unity scene is running");
                 break;
+            case GameResponse::GameEnded:
+                ui->btnStartGame->setEnabled(true);
+                ui->lblCurrentStatus->setText(tr("Game Ended"));
+                logger->writeLog("Client said: Unity scene has ended");
+                break;
         }
-    if(clientAnswer.messageType == MessageType::GameStats){
-        ui->btnStartGame->setEnabled(true);
-        ui->lblCurrentStatus->setText(tr("Game Ended"));
-        logger->writeLog("Client said: Unity scene has ended");
-        logger->writeLog(QString("Game Stats:\n\tElapsed Time: %1 ms\n\tShots Fired: %2\n\tTargets Hit: %3").arg(clientAnswer.gameStats.elapsedTime).arg(clientAnswer.gameStats.shotsFired).arg(clientAnswer.gameStats.targetsHit));
+    if (clientAnswer.messageType == MessageType::GameStats) {
+        QString gameStats = QString("Game Stats - Elapsed Time: %1ms, Shots Fired: %2, Targets Hit: %3").arg(clientAnswer.gameStats.elapsedTime).arg(clientAnswer.gameStats.shotsFired).arg(clientAnswer.gameStats.targetsHit);
+        ui->lblLastGameStats->setText(gameStats);
+        logger->writeLog(gameStats);
     }
 }
 

@@ -11,7 +11,8 @@ public enum MessageType
 
 public enum GameResponse
 {
-    GameStarted = 0
+    GameStarted = 0,
+    GameEnded = 1
 }
 
 public class InputCommands
