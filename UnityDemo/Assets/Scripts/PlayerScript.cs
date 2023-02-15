@@ -19,6 +19,10 @@ public class PlayerScript : MonoBehaviour
     [SerializeField, Range(-360f, 360f)] private float barrelMaxAngle;
     [SerializeField, Range(-360f, 360f)] private float barrelMinAngle;
     [SerializeField, Min(0)] private float shootCooldown = .2f;
+    [SerializeField, Min(0)] private float tankAcceleration = 10000f;
+    [SerializeField, Min(0)] private float tankRotationSpeed = 90f;
+    [SerializeField, Min(0)] private float turretRotationSpeed = 90f;
+    [SerializeField, Min(0)] private float barrelRotationSpeed = 30f;
 
     private Rigidbody _rigidbody;
     private InputCommands _inputCommands;
@@ -39,7 +43,7 @@ public class PlayerScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!_hasControl)
+        if (!_hasControl)
             return;
         _inputCommands = TcpClientScript.Instance.InputCommands;
         TankMovement();
@@ -60,38 +64,37 @@ public class PlayerScript : MonoBehaviour
     private void TankMovement()
     {
         var forward = transform.right;
-        var rotationSpeed = new Vector3(0, 0, 0);
+        var rotationDirectionAndSpeed = 0f;
         var acceleration = 0f;
         if (_inputCommands.MoveForward)
-            acceleration += 10000f;
+            acceleration += tankAcceleration;
         if (_inputCommands.MoveBackward)
-            acceleration -= 10000f;
+            acceleration -= tankAcceleration;
         if (_inputCommands.MoveLeft)
-            rotationSpeed += new Vector3(0, -90, 0);
+            rotationDirectionAndSpeed -= tankRotationSpeed;
         if (_inputCommands.MoveRight)
-            rotationSpeed += new Vector3(0, 90, 0);
-        var deltaRotation = Quaternion.Euler(rotationSpeed * Time.fixedDeltaTime);
+            rotationDirectionAndSpeed += tankRotationSpeed;
         _rigidbody.AddForce(forward * acceleration, ForceMode.Force);
-        _rigidbody.MoveRotation(_rigidbody.rotation * deltaRotation);
+        _rigidbody.MoveRotation(_rigidbody.rotation * Quaternion.Euler(new Vector3(0, rotationDirectionAndSpeed * Time.fixedDeltaTime, 0)));
     }
 
     private void TurretRotation()
     {
-        var rotationSpeed = 0;
+        var rotationDirectionAndSpeed = 0f;
         if (_inputCommands.RotateLeft)
-            rotationSpeed += -90;
+            rotationDirectionAndSpeed -= turretRotationSpeed;
         if (_inputCommands.RotateRight)
-            rotationSpeed += 90;
-        turret.transform.Rotate(Vector3.up, rotationSpeed * Time.fixedDeltaTime, Space.Self);
+            rotationDirectionAndSpeed += turretRotationSpeed;
+        turret.transform.Rotate(Vector3.up, rotationDirectionAndSpeed * Time.fixedDeltaTime, Space.Self);
     }
 
     private void BarrelRotation()
     {
-        var rotationSpeed = 0;
+        var rotationSpeed = 0f;
         if (_inputCommands.RotateUp)
-            rotationSpeed += 30;
+            rotationSpeed += barrelRotationSpeed;
         if (_inputCommands.RotateDown)
-            rotationSpeed += -30;
+            rotationSpeed -= barrelRotationSpeed;
         var eulerAngles = barrel.transform.localEulerAngles;
         eulerAngles.z += rotationSpeed * Time.fixedDeltaTime;
         if (eulerAngles.z < _barrelMinAngle && eulerAngles.z > _barrelAngleMiddleGround)
