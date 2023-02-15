@@ -4,6 +4,7 @@ public static class ConstValuesAndUtility
 {
     public const string IpAddress = "127.0.0.1";
     public const int Port = 7030;
+    public const float DelayBeforeLoadingScene = 2f;
     public const int NumberOfEnemiesToSpawn = 3;
 
     #region tags

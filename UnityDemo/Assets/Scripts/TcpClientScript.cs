@@ -16,6 +16,10 @@ public class TcpClientScript : MonoBehaviour
     private TcpClient _tcpClient;
     private Thread _clientThread;
 
+    public delegate void GameStartEventHandler();
+
+    public event GameStartEventHandler GameStartEvent;
+
     public InputCommands InputCommands { get; } = new();
     public bool MessageAvailable => _messages.Count > 0;
 
@@ -101,7 +105,9 @@ public class TcpClientScript : MonoBehaviour
                         case MessageType.GameStart:
                             var gameStartData = new byte[messageLength];
                             length = networkStream.Read(gameStartData, 0, messageLength);
-                            //todo
+                            if (length != messageLength)
+                                continue;
+                            GameStartEvent?.Invoke();
                             break;
                         case MessageType.Inputs:
                             var inputs = new byte[messageLength];
@@ -141,7 +147,21 @@ public class TcpClientScript : MonoBehaviour
         }
     }
 
-    private void SendAnswerToServer(ClientAnswer answer)
+    private void UpdateInputCommands(byte[] commands)
+    {
+        var index = 0;
+        InputCommands.FireWeapon = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveForward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveBackward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveLeft = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateUp = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateDown = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateLeft = BitConverter.ToBoolean(commands, index);
+    }
+
+    public void SendAnswerToServer(ClientAnswer answer)
     {
         if (_tcpClient is null)
             return;
@@ -164,7 +184,7 @@ public class TcpClientScript : MonoBehaviour
         }
     }
 
-    private void SendMessageToServer(string message)
+    public void SendMessageToServer(string message)
     {
         if (_tcpClient is null)
             return;
@@ -179,19 +199,5 @@ public class TcpClientScript : MonoBehaviour
         {
             Debug.Log(exception);
         }
-    }
-
-    private void UpdateInputCommands(byte[] commands)
-    {
-        var index = 0;
-        InputCommands.FireWeapon = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveForward = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveRight = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveBackward = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveLeft = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateUp = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateRight = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateDown = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateLeft = BitConverter.ToBoolean(commands, index);
     }
 }

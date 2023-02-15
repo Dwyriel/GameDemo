@@ -465,7 +465,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Awaiting Connection
+  m_Text: 'Awaiting
+
+    Connection'
 --- !u!222 &773295421
 CanvasRenderer:
   m_ObjectHideFlags: 0
