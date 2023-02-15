@@ -16,6 +16,9 @@ public class GameSceneManager : MonoBehaviour
     
     [SerializeField] private Text connectionLostUIText;
     [SerializeField] private Text elapsedTimeText;
+    [SerializeField] private Text shotsFiredText;
+    [SerializeField] private Text enemiesLeftText;
+    [SerializeField] private Text gameOverText;
     [SerializeField] private GameObject mapCenter;
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField, Min(0)] private float spawnZoneVerticalVariation = 5f;
@@ -23,6 +26,8 @@ public class GameSceneManager : MonoBehaviour
     [SerializeField, Min(0)] private float spawnZoneVerticalOffset = 50f;
     [SerializeField, Min(0)] private float spawnZoneHorizontalOffset = 350f;
 
+    private const string ShotsFiredString = "Shots fired: ";
+    private const string EnemiesLeftString = "Enemies left: ";
     private bool _shouldRunUpdate = true;
     private float _elapsedTime;
     private int _remainingEnemies;
@@ -32,6 +37,7 @@ public class GameSceneManager : MonoBehaviour
     {
         SpawnEnemies();
         GameObject.FindWithTag(ConstValuesAndUtility.PlayerTag).GetComponent<PlayerScript>().ShotFiredEvent += ShotFired;
+        enemiesLeftText.text = EnemiesLeftString + _remainingEnemies;
     }
 
     // Update is called once per frame
@@ -46,6 +52,7 @@ public class GameSceneManager : MonoBehaviour
             return;
         _shouldRunUpdate = false;
         GameOverEvent?.Invoke();
+        gameOverText.text = "Game Over";
         var clientAnswer = new ClientAnswer
         {
             MessageLength = sizeof(int) * 3,
@@ -75,11 +82,13 @@ public class GameSceneManager : MonoBehaviour
     private void ShotFired()
     {
         _shotsFired++;
+        shotsFiredText.text = ShotsFiredString + _shotsFired;
     }
 
     private void EnemyDestroyed()
     {
         _remainingEnemies--;
+        enemiesLeftText.text = EnemiesLeftString + _remainingEnemies;
     }
 
     private IEnumerator LoadIdleScene()
