@@ -10,8 +10,7 @@ enum class MessageType : int {
 };
 
 enum class GameResponse : int {
-    GameStarted = 0,
-    GameEnded = 1
+    GameStarted = 0
 };
 
 struct GameStartCommand {
@@ -44,8 +43,8 @@ struct ClientAnswer {
     int messageLength = sizeof(ClientAnswer) - (sizeof(int) * 2);
     MessageType messageType = MessageType::GameResponse;
     union {
-        char bytes;
-        GameResponse gameResponse = GameResponse::GameEnded;
+        char bytes = 0;
+        GameResponse gameResponse;
         GameStats gameStats;
     };
 };

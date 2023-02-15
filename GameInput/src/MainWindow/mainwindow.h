@@ -45,7 +45,7 @@ private slots:
 
     void clientDisconnected();
 
-    void clientSentResponse(ClientAnswer gameResponse);
+    void clientSentResponse(ClientAnswer clientAnswer);
 
     void startGameBtnClicked();
 
