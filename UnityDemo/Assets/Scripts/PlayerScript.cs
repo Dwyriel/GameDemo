@@ -3,6 +3,14 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    #region Events
+
+    public delegate void ShotFiredEventHandler();
+
+    public event ShotFiredEventHandler ShotFiredEvent;
+
+    #endregion
+
     [SerializeField] private GameObject turret;
     [SerializeField] private GameObject barrel;
     [SerializeField] private GameObject barrelTip;
@@ -13,6 +21,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField, Min(0)] private float shootCooldown = .2f;
 
     private Rigidbody _rigidbody;
+    private InputCommands _inputCommands;
     private float _barrelAngleMiddleGround;
     private float _barrelMaxAngle;
     private float _barrelMinAngle;
@@ -32,6 +41,7 @@ public class PlayerScript : MonoBehaviour
 
     private void FixedUpdate()
     {
+        _inputCommands = TcpClientScript.Instance.InputCommands;
         TankMovement();
         TurretRotation();
         BarrelRotation();
@@ -43,13 +53,13 @@ public class PlayerScript : MonoBehaviour
         var forward = transform.right;
         var rotationSpeed = new Vector3(0, 0, 0);
         var acceleration = 0f;
-        if (Input.GetKey(KeyCode.W))
+        if (_inputCommands.MoveForward)
             acceleration += 10000f;
-        if (Input.GetKey(KeyCode.S))
+        if (_inputCommands.MoveBackward)
             acceleration -= 10000f;
-        if (Input.GetKey(KeyCode.A))
+        if (_inputCommands.MoveLeft)
             rotationSpeed += new Vector3(0, -90, 0);
-        if (Input.GetKey(KeyCode.D))
+        if (_inputCommands.MoveRight)
             rotationSpeed += new Vector3(0, 90, 0);
         var deltaRotation = Quaternion.Euler(rotationSpeed * Time.fixedDeltaTime);
         _rigidbody.AddForce(forward * acceleration, ForceMode.Force);
@@ -59,9 +69,9 @@ public class PlayerScript : MonoBehaviour
     private void TurretRotation()
     {
         var rotationSpeed = 0;
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (_inputCommands.RotateLeft)
             rotationSpeed += -90;
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (_inputCommands.RotateRight)
             rotationSpeed += 90;
         turret.transform.Rotate(Vector3.up, rotationSpeed * Time.fixedDeltaTime, Space.Self);
     }
@@ -69,9 +79,9 @@ public class PlayerScript : MonoBehaviour
     private void BarrelRotation()
     {
         var rotationSpeed = 0;
-        if (TcpClientScript.Instance.InputCommands.RotateUp || Input.GetKey(KeyCode.UpArrow))
+        if (_inputCommands.RotateUp)
             rotationSpeed += 30;
-        if (TcpClientScript.Instance.InputCommands.RotateDown || Input.GetKey(KeyCode.DownArrow))
+        if (_inputCommands.RotateDown)
             rotationSpeed += -30;
         var eulerAngles = barrel.transform.localEulerAngles;
         eulerAngles.z += rotationSpeed * Time.fixedDeltaTime;
@@ -84,12 +94,13 @@ public class PlayerScript : MonoBehaviour
 
     private void Shoot()
     {
-        if(!_playerCanShoot || !Input.GetKey(KeyCode.Space))
+        if (!_playerCanShoot || !_inputCommands.FireWeapon)
             return;
         var barrelTipPosition = barrelTip.transform.position;
         var barrelBasePosition = barrelBase.transform.position;
         Instantiate(bulletPrefab, barrelTipPosition, Quaternion.LookRotation(barrelTipPosition - barrelBasePosition));
         _playerCanShoot = false;
+        ShotFiredEvent?.Invoke();
         if (_shootCooldownCoroutine != null)
             StopCoroutine(_shootCooldownCoroutine);
         _shootCooldownCoroutine = StartCoroutine(ShootCooldown());

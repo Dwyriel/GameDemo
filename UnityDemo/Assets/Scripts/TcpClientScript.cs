@@ -16,9 +16,13 @@ public class TcpClientScript : MonoBehaviour
     private TcpClient _tcpClient;
     private Thread _clientThread;
 
+    #region Events
+
     public delegate void GameStartEventHandler();
 
     public event GameStartEventHandler GameStartEvent;
+
+    #endregion
 
     public InputCommands InputCommands { get; } = new();
     public bool MessageAvailable => _messages.Count > 0;
@@ -171,7 +175,7 @@ public class TcpClientScript : MonoBehaviour
             var message = answer.MessageType switch
             {
                 MessageType.GameResponse => header.Concat(BitConverter.GetBytes((int) answer.GameResponse)).ToArray(),
-                MessageType.GameStats => header.Concat(BitConverter.GetBytes(answer.elapsedTime)).Concat(BitConverter.GetBytes(answer.shotsFired)).Concat(BitConverter.GetBytes(answer.targetsHit)).ToArray(),
+                MessageType.GameStats => header.Concat(BitConverter.GetBytes(answer.ElapsedTime)).Concat(BitConverter.GetBytes(answer.ShotsFired)).Concat(BitConverter.GetBytes(answer.TargetsHit)).ToArray(),
                 _ => null
             };
             if (message is null)
