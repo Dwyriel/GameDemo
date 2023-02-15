@@ -1140,9 +1140,9 @@ MonoBehaviour:
   mapCenter: {fileID: 659059406}
   enemyPrefab: {fileID: 611904702092689950, guid: b7e8e12829810c215b38e56b2962e809, type: 3}
   spawnZoneVerticalVariation: 5
-  spawnZoneHorizontalVariation: 10
-  spawnZoneVerticalOffset: 10
-  spawnZoneHorizontalOffset: 50
+  spawnZoneHorizontalVariation: 50
+  spawnZoneVerticalOffset: 50
+  spawnZoneHorizontalOffset: 350
 --- !u!1001 &7285555386144490720
 PrefabInstance:
   m_ObjectHideFlags: 0

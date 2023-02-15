@@ -67,14 +67,13 @@ public class GameSceneManager : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        var mapCenterPosition = mapCenter.transform.position;
         for (var i = 0; i < ConstValuesAndUtility.NumberOfEnemiesToSpawn; i++, _remainingEnemies++)
         {
             var x = Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation) + (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset);
             var y = Random.Range(-spawnZoneVerticalVariation, spawnZoneVerticalVariation) + spawnZoneVerticalOffset;
             var z = Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation) + (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset);
             var spawnPoint = new Vector3(x, y, z);
-            var instantiatedGameObject = Instantiate(enemyPrefab, spawnPoint, Quaternion.LookRotation(mapCenterPosition - spawnPoint));
+            var instantiatedGameObject = Instantiate(enemyPrefab, spawnPoint, Quaternion.LookRotation(mapCenter.transform.position - spawnPoint));
             instantiatedGameObject.GetComponent<EnemyScript>().EnemyDestroyedEvent += EnemyDestroyed;
         }
     }
