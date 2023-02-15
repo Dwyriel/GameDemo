@@ -10,6 +10,8 @@ public class EnemyScript : MonoBehaviour
 
     #endregion
 
+    private bool _gotHit;
+
     private void Start()
     {
         ConstValuesAndUtility.AddTag(transform, ConstValuesAndUtility.EnemyTag);
@@ -19,6 +21,9 @@ public class EnemyScript : MonoBehaviour
     {
         if (!other.CompareTag(ConstValuesAndUtility.BulletTag))
             return;
+        if(_gotHit)
+            return;
+        _gotHit = true;
         EnemyDestroyedEvent?.Invoke();
         Destroy(gameObject);
     }
