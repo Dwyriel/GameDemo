@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Globalization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,7 +12,7 @@ public class GameSceneManager : MonoBehaviour
     public event GameOverEventHandler GameOverEvent;
 
     #endregion
-    
+
     [SerializeField] private Text connectionLostUIText;
     [SerializeField] private Text elapsedTimeText;
     [SerializeField] private Text shotsFiredText;
@@ -43,12 +42,12 @@ public class GameSceneManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if(!_shouldRunUpdate)
+        if (!_shouldRunUpdate)
             return;
         _elapsedTime += Time.deltaTime;
         elapsedTimeText.text = _elapsedTime.ToString("0.00");
         connectionLostUIText.text = TcpClientScript.IsConnected ? "" : "Lost Connection";
-        if (_elapsedTime <= ConstValuesAndUtility.MaxRoundTime && _remainingEnemies != 0) 
+        if (_elapsedTime <= ConstValuesAndUtility.MaxRoundTime && _remainingEnemies != 0)
             return;
         _shouldRunUpdate = false;
         GameOverEvent?.Invoke();
@@ -69,10 +68,19 @@ public class GameSceneManager : MonoBehaviour
     {
         for (var i = 0; i < ConstValuesAndUtility.NumberOfEnemiesToSpawn; i++, _remainingEnemies++)
         {
-            var x = Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation) + (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset);
-            var y = Random.Range(-spawnZoneVerticalVariation, spawnZoneVerticalVariation) + spawnZoneVerticalOffset;
-            var z = Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation) + (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset);
-            var spawnPoint = new Vector3(x, y, z);
+            float x, z;
+            var spawnOnXAxis = Random.value > .5;
+            if (spawnOnXAxis)
+            {
+                x = Random.Range(-spawnZoneHorizontalOffset, spawnZoneHorizontalOffset);
+                z = (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset) + Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation);
+            }
+            else //spawn on Z axis
+            {
+                x = (Random.value > .5 ? spawnZoneHorizontalOffset : -spawnZoneHorizontalOffset) + Random.Range(-spawnZoneHorizontalVariation, spawnZoneHorizontalVariation);
+                z = Random.Range(-spawnZoneHorizontalOffset, spawnZoneHorizontalOffset);
+            }
+            var spawnPoint = new Vector3(x, Random.Range(-spawnZoneVerticalVariation, spawnZoneVerticalVariation) + spawnZoneVerticalOffset, z);
             var instantiatedGameObject = Instantiate(enemyPrefab, spawnPoint, Quaternion.LookRotation(mapCenter.transform.position - spawnPoint));
             instantiatedGameObject.GetComponent<EnemyScript>().EnemyDestroyedEvent += EnemyDestroyed;
         }
