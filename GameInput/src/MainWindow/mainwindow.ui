@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>685</width>
-    <height>345</height>
+    <height>355</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>685</width>
-    <height>345</height>
+    <height>355</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>685</width>
-    <height>345</height>
+    <height>355</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -297,6 +297,27 @@
     </property>
     <property name="text">
      <string>Disconnected</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblLastGameStats">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>315</y>
+      <width>685</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Game stats will be shown here</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

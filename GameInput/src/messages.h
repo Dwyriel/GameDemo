@@ -44,8 +44,8 @@ struct ClientAnswer {
     int messageLength = sizeof(ClientAnswer) - (sizeof(int) * 2);
     MessageType messageType = MessageType::GameResponse;
     union {
-        char bytes;
-        GameResponse gameResponse = GameResponse::GameEnded;
+        char bytes = 0;
+        GameResponse gameResponse;
         GameStats gameStats;
     };
 };

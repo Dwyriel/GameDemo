@@ -11,10 +11,18 @@ public class TcpClientScript : MonoBehaviour
     private const int HeaderSize = sizeof(int) * 2;
     private const int TimeBetweenReconnectAttemptsMilliseconds = 2000;
     private const int TimeBetweenReadAttemptsMilliseconds = 10;
-    private const int MaxFailedReadAttemptsBeforeEndingConnection = 500;
+    private const int MaxFailedReadAttemptsBeforeEndingConnection = 10;
     private readonly List<string> _messages = new();
     private TcpClient _tcpClient;
     private Thread _clientThread;
+
+    #region Events
+
+    public delegate void GameStartEventHandler();
+
+    public event GameStartEventHandler GameStartEvent;
+
+    #endregion
 
     public InputCommands InputCommands { get; } = new();
     public bool MessageAvailable => _messages.Count > 0;
@@ -101,7 +109,9 @@ public class TcpClientScript : MonoBehaviour
                         case MessageType.GameStart:
                             var gameStartData = new byte[messageLength];
                             length = networkStream.Read(gameStartData, 0, messageLength);
-                            //todo
+                            if (length != messageLength)
+                                continue;
+                            GameStartEvent?.Invoke();
                             break;
                         case MessageType.Inputs:
                             var inputs = new byte[messageLength];
@@ -141,7 +151,21 @@ public class TcpClientScript : MonoBehaviour
         }
     }
 
-    private void SendAnswerToServer(ClientAnswer answer)
+    private void UpdateInputCommands(byte[] commands)
+    {
+        var index = 0;
+        InputCommands.FireWeapon = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveForward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveBackward = BitConverter.ToBoolean(commands, index++);
+        InputCommands.MoveLeft = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateUp = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateRight = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateDown = BitConverter.ToBoolean(commands, index++);
+        InputCommands.RotateLeft = BitConverter.ToBoolean(commands, index);
+    }
+
+    public void SendAnswerToServer(ClientAnswer answer)
     {
         if (_tcpClient is null)
             return;
@@ -151,7 +175,7 @@ public class TcpClientScript : MonoBehaviour
             var message = answer.MessageType switch
             {
                 MessageType.GameResponse => header.Concat(BitConverter.GetBytes((int) answer.GameResponse)).ToArray(),
-                MessageType.GameStats => header.Concat(BitConverter.GetBytes(answer.elapsedTime)).Concat(BitConverter.GetBytes(answer.shotsFired)).Concat(BitConverter.GetBytes(answer.targetsHit)).ToArray(),
+                MessageType.GameStats => header.Concat(BitConverter.GetBytes(answer.ElapsedTime)).Concat(BitConverter.GetBytes(answer.ShotsFired)).Concat(BitConverter.GetBytes(answer.TargetsHit)).ToArray(),
                 _ => null
             };
             if (message is null)
@@ -164,7 +188,7 @@ public class TcpClientScript : MonoBehaviour
         }
     }
 
-    private void SendMessageToServer(string message)
+    public void SendMessageToServer(string message)
     {
         if (_tcpClient is null)
             return;
@@ -179,19 +203,5 @@ public class TcpClientScript : MonoBehaviour
         {
             Debug.Log(exception);
         }
-    }
-
-    private void UpdateInputCommands(byte[] commands)
-    {
-        var index = 0;
-        InputCommands.FireWeapon = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveForward = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveRight = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveBackward = BitConverter.ToBoolean(commands, index++);
-        InputCommands.MoveLeft = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateUp = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateRight = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateDown = BitConverter.ToBoolean(commands, index++);
-        InputCommands.RotateLeft = BitConverter.ToBoolean(commands, index);
     }
 }

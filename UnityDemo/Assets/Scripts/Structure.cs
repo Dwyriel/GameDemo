@@ -46,9 +46,9 @@ public struct ClientAnswer
 
     #region GameStats
 
-    [FieldOffset(8)] public int elapsedTime;
-    [FieldOffset(12)] public int shotsFired;
-    [FieldOffset(16)] public int targetsHit;
+    [FieldOffset(8)] public int ElapsedTime;
+    [FieldOffset(12)] public int ShotsFired;
+    [FieldOffset(16)] public int TargetsHit;
 
     #endregion
 
