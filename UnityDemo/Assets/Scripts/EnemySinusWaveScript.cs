@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySinusWaveScript : MonoBehaviour
+public class EnemySinusWaveScript : EnemyMovementBase
 {
     private enum CurrentState
     {
         AwayFromTarget,
         FinishRotating,
-        FlyUntilCloseToTarget,
-        Rotating
     }
     
+    private CurrentState _currentState = CurrentState.AwayFromTarget;
+
     private void Start()
     {
         

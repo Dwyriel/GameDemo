@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyHorizontalScript : MonoBehaviour
+public class EnemyHorizontalScript : EnemyMovementBase
 {
     private enum CurrentState
     {
@@ -10,26 +10,20 @@ public class EnemyHorizontalScript : MonoBehaviour
     }
 
     private CurrentState _currentState = CurrentState.AwayFromTarget;
-    private Rigidbody _rigidbody;
-    private Vector3 _mapCenterPosition;
-    private Vector3 _targetPosition;
-    private Vector3 _currentPosition;
-    private Vector3 _forwardDirection;
-    private Vector3 _directionToTarget;
 
     private void Start()
     {
-        _mapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
-        _rigidbody = GetComponent<Rigidbody>();
+        MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
+        ComponentRigidbody = GetComponent<Rigidbody>();
         GenerateTargetPosition();
     }
 
     private void FixedUpdate()
     {
-        _currentPosition = transform.position;
-        _forwardDirection = transform.forward;
-        _rigidbody.MovePosition(_currentPosition + _forwardDirection * ConstValuesAndUtility.MovingUnitsPerSecond * Time.fixedDeltaTime);
-        _directionToTarget = _targetPosition - _currentPosition;
+        CurrentPosition = transform.position;
+        ForwardDirection = transform.forward;
+        ComponentRigidbody.MovePosition(CurrentPosition + ForwardDirection * ConstValuesAndUtility.MovingUnitsPerSecond * Time.fixedDeltaTime);
+        DirectionToTarget = TargetPosition - CurrentPosition;
         switch (_currentState)
         {
             case CurrentState.AwayFromTarget:
@@ -48,28 +42,31 @@ public class EnemyHorizontalScript : MonoBehaviour
 
     private void AwayFromTargetUpdate()
     {
-        if (_directionToTarget.magnitude < ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude < ConstValuesAndUtility.MaxDistanceToMidAllowed)
             SwitchToFinishRotatingState();
-        var angleToTarget = Vector3.SignedAngle(_directionToTarget, _forwardDirection, Vector3.up);
-        if (angleToTarget is > -2f and < 2f)
-            return;
-        var angleToRotate = angleToTarget > 0 ? -ConstValuesAndUtility.RotationAnglePerSecond : ConstValuesAndUtility.RotationAnglePerSecond;
-        _rigidbody.MoveRotation(_rigidbody.rotation * Quaternion.Euler(new Vector3(0, angleToRotate * Time.fixedDeltaTime, 0)));
+        var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
+        CalculateRotationAndInclination(angleToTarget);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void FinishRotatingUpdate()
     {
-        var angleToTarget = Vector3.SignedAngle(_directionToTarget, _forwardDirection, Vector3.up);
-        if (angleToTarget is > -2f and < 2f)
+        var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
+        if (angleToTarget is > -ConstValuesAndUtility.AngleSnapRange and < ConstValuesAndUtility.AngleSnapRange)
             SwitchToFlyingStraightState();
-        var angleToRotate = angleToTarget > 0 ? -ConstValuesAndUtility.RotationAnglePerSecond : ConstValuesAndUtility.RotationAnglePerSecond;
-        _rigidbody.MoveRotation(_rigidbody.rotation * Quaternion.Euler(new Vector3(0, angleToRotate * Time.fixedDeltaTime, 0)));
+        CalculateRotationAndInclination(angleToTarget);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void FlyingStraightUpdate()
     {
-        if (_directionToTarget.magnitude > ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude > ConstValuesAndUtility.MaxDistanceToMidAllowed)
             SwitchToAwayFromTargetState();
+        CalculateRotationAndInclination(0);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void SwitchToAwayFromTargetState()
@@ -91,6 +88,32 @@ public class EnemyHorizontalScript : MonoBehaviour
     private void GenerateTargetPosition()
     {
         const float range = ConstValuesAndUtility.RandomMoveTargetRange;
-        _targetPosition = _mapCenterPosition + new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
+        TargetPosition = MapCenterPosition + new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
+    }
+
+    private void CalculateRotationAndInclination(float angle)
+    {
+        switch (angle)
+        {
+            case >= -ConstValuesAndUtility.AngleSnapRange and <= ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = 0;
+                Inclination = Inclination switch
+                {
+                    > ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination),
+                    < -ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0),
+                    _ => 0
+                };
+                break;
+            case > ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination);
+                break;
+            case < -ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0);
+                break;
+            default:
+                return;
+        }
     }
 }

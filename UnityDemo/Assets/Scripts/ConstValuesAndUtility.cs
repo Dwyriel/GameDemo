@@ -29,7 +29,9 @@ public static class ConstValuesAndUtility
     public const float MaxDistanceToMidAllowed = 300;
     public const float RandomMoveTargetRange = 50f;
     public const float MovingUnitsPerSecond = 15;
+    public const float AngleSnapRange = 2f;
     public const float RotationAnglePerSecond = 20f;
+    public const float MaximumInclination = 30f;
 
     #endregion
 
