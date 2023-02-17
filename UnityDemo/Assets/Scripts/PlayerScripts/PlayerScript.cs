@@ -16,6 +16,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private GameObject barrelTip;
     [SerializeField] private GameObject barrelBase;
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private LineRenderer aimLine;
     [SerializeField, Range(-360f, 360f)] private float barrelMaxAngle;
     [SerializeField, Range(-360f, 360f)] private float barrelMinAngle;
     [SerializeField, Min(0)] private float shootCooldown = .2f;
@@ -23,6 +24,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField, Min(0)] private float tankRotationSpeed = 90f;
     [SerializeField, Min(0)] private float turretRotationSpeed = 90f;
     [SerializeField, Min(0)] private float barrelRotationSpeed = 30f;
+    [SerializeField, Min(0)] private float aimRaycastMaxDistance = 500f;
 
     private Rigidbody _rigidbody;
     private InputCommands _inputCommands;
@@ -32,6 +34,7 @@ public class PlayerScript : MonoBehaviour
     private float _barrelMinAngle;
     private bool _playerCanShoot = true;
     private Coroutine _shootCooldownCoroutine;
+    private Vector3 _barrelLookDirection;
 
     private void Start()
     {
@@ -39,10 +42,18 @@ public class PlayerScript : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         FindObjectOfType<GameSceneManager>().GameOverEvent += GameOverEvent;
         ConstValuesAndUtility.AddTag(transform, ConstValuesAndUtility.PlayerTag);
+        aimLine.useWorldSpace = true;
+        _barrelLookDirection = barrelTip.transform.position - barrelBase.transform.position;
+    }
+
+    private void Update()
+    {
+        RepositionAimLine();
     }
 
     private void FixedUpdate()
     {
+        _barrelLookDirection = barrelTip.transform.position - barrelBase.transform.position;
         if (!_hasControl)
             return;
         _inputCommands = TcpClientScript.Instance.InputCommands;
@@ -59,6 +70,14 @@ public class PlayerScript : MonoBehaviour
         _barrelMaxAngle = barrelMaxAngle < 0 ? 360 + barrelMaxAngle : barrelMaxAngle;
         _barrelMinAngle = barrelMinAngle < 0 ? 360 + barrelMinAngle : barrelMinAngle;
         _barrelAngleMiddleGround = (Mathf.Max(_barrelMaxAngle, _barrelMinAngle) - Mathf.Min(_barrelMinAngle, _barrelMaxAngle)) / 2;
+    }
+
+    private void RepositionAimLine()
+    {
+        var barrelTipPos = barrelTip.transform.position;
+        var hitSomething = Physics.Raycast(barrelTipPos, _barrelLookDirection, out var hit, aimRaycastMaxDistance);
+        Vector3[] positions = {barrelTipPos, _barrelLookDirection * (hitSomething ? hit.distance : aimRaycastMaxDistance) + barrelTipPos};
+        aimLine.SetPositions(positions);
     }
 
     private void TankMovement()
@@ -108,9 +127,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (!_playerCanShoot || !_inputCommands.FireWeapon)
             return;
-        var barrelTipPosition = barrelTip.transform.position;
-        var barrelBasePosition = barrelBase.transform.position;
-        Instantiate(bulletPrefab, barrelTipPosition, Quaternion.LookRotation(barrelTipPosition - barrelBasePosition));
+        Instantiate(bulletPrefab, barrelTip.transform.position, Quaternion.LookRotation(_barrelLookDirection));
         _playerCanShoot = false;
         ShotFiredEvent?.Invoke();
         if (_shootCooldownCoroutine != null)
