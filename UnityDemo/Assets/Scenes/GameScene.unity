@@ -1139,9 +1139,9 @@ MonoBehaviour:
   gameOverText: {fileID: 1260439988}
   mapCenter: {fileID: 659059406}
   enemyPrefab: {fileID: 611904702092689950, guid: b7e8e12829810c215b38e56b2962e809, type: 3}
-  spawnZoneVerticalVariation: 5
+  spawnZoneVerticalVariation: 7.5
   spawnZoneHorizontalVariation: 50
-  spawnZoneVerticalOffset: 50
+  spawnZoneVerticalOffset: 55
   spawnZoneHorizontalOffset: 350
 --- !u!1001 &7285555386144490720
 PrefabInstance:

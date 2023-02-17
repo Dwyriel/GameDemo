@@ -4,10 +4,6 @@ public static class ConstValuesAndUtility
 {
     public const string IpAddress = "127.0.0.1";
     public const int Port = 7030;
-    public const float DelayBeforeLoadingGameScene = 2f;
-    public const float DelayBeforeLoadingIdleScene = 5f;
-    public const int NumberOfEnemiesToSpawn = 3;
-    public const float MaxRoundTime = 120f;
 
     #region tags
 
@@ -16,6 +12,26 @@ public static class ConstValuesAndUtility
     public const string BulletTag = "Bullet";
     public const string ScenarioTag = "Scenario";
     public const string MapCenterPointTag = "MapCenterPoint";
+
+    #endregion
+
+    #region Round
+
+    public const float DelayBeforeLoadingGameScene = 2f;
+    public const float DelayBeforeLoadingIdleScene = 5f;
+    public const int NumberOfEnemiesToSpawn = 3;
+    public const float MaxRoundTime = 120f;
+
+    #endregion
+
+    #region Enemies
+
+    public const float MaxAllowedDistanceToTarget = 300;
+    public const float RandomMoveTargetRange = 50f;
+    public const float MovingUnitsPerSecond = 15;
+    public const float AngleSnapRange = 2f;
+    public const float RotationAnglePerSecond = 20f;
+    public const float MaximumInclination = 30f;
 
     #endregion
 
