@@ -17,7 +17,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Concurren
 set(PROJECT_SOURCES
         main.cpp
         src/defines.h
-        src/messages.h
+        src/messagesStructure.h
         src/MainWindow/mainwindow.cpp
         src/MainWindow/mainwindow.h
         src/MainWindow/mainwindow.ui

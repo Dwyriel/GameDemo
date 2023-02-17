@@ -1,5 +1,5 @@
-#ifndef GAMEINPUT_MESSAGES_H
-#define GAMEINPUT_MESSAGES_H
+#ifndef GAMEINPUT_MESSAGESSTRUCTURE_H
+#define GAMEINPUT_MESSAGESSTRUCTURE_H
 
 enum class MessageType : int {
     GameStart = 0,
@@ -59,4 +59,4 @@ struct Message {
     QByteArray message;
 };
 
-#endif //GAMEINPUT_MESSAGES_H
+#endif //GAMEINPUT_MESSAGESSTRUCTURE_H

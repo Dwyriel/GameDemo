@@ -7,7 +7,7 @@
 #include <QList>
 #include <QString>
 
-#include "../messages.h"
+#include "../messagesStructure.h"
 #include "../defines.h"
 #include "src/Logger/Logger.h"
 
