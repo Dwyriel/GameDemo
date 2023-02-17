@@ -108,7 +108,7 @@ public class GameSceneManager : MonoBehaviour
     {
         _shouldRunUpdate = false;
         GameOverEvent?.Invoke();
-        gameOverText.text = "Game Over";
+        gameOverText.text = "Game Ended";
         var clientAnswer = new ClientAnswer
         {
             MessageLength = sizeof(int) * 3,
