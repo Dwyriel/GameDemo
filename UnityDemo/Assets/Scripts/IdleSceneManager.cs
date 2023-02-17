@@ -47,13 +47,6 @@ public class IdleSceneManager : MonoBehaviour
         yield return new WaitForSeconds(ConstValuesAndUtility.DelayBeforeLoadingGameScene);
         while (asyncOperation.progress < .9f)
             yield return null;
-        var clientAnswer = new ClientAnswer
-        {
-            MessageLength = sizeof(int),
-            MessageType = MessageType.GameResponse,
-            GameResponse = GameResponse.GameStarted
-        };
-        TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
         asyncOperation.allowSceneActivation = true;
     }
 }

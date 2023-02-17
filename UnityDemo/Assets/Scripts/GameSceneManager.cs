@@ -31,12 +31,16 @@ public class GameSceneManager : MonoBehaviour
     private float _elapsedTime;
     private int _remainingEnemies;
     private int _shotsFired;
+    private bool _wasConnected = true;
 
     private void Start()
     {
         SpawnEnemies();
         GameObject.FindWithTag(ConstValuesAndUtility.PlayerTag).GetComponent<PlayerScript>().ShotFiredEvent += ShotFired;
         enemiesLeftText.text = EnemiesLeftString + _remainingEnemies;
+        _wasConnected = TcpClientScript.IsConnected;
+        if (_wasConnected)
+            TellServerGameStarted();
     }
 
     // Update is called once per frame
@@ -44,24 +48,14 @@ public class GameSceneManager : MonoBehaviour
     {
         if (!_shouldRunUpdate)
             return;
+        if (!_wasConnected && TcpClientScript.IsConnected)
+            TellServerGameStarted();
+        _wasConnected = TcpClientScript.IsConnected;
         _elapsedTime += Time.deltaTime;
         elapsedTimeText.text = _elapsedTime.ToString("0.00");
         connectionLostUIText.text = TcpClientScript.IsConnected ? "" : "Lost Connection";
-        if (_elapsedTime <= ConstValuesAndUtility.MaxRoundTime && _remainingEnemies != 0)
-            return;
-        _shouldRunUpdate = false;
-        GameOverEvent?.Invoke();
-        gameOverText.text = "Game Over";
-        var clientAnswer = new ClientAnswer
-        {
-            MessageLength = sizeof(int) * 3,
-            MessageType = MessageType.GameStats,
-            ElapsedTime = (int) (_elapsedTime * 1000f),
-            ShotsFired = _shotsFired,
-            TargetsHit = ConstValuesAndUtility.NumberOfEnemiesToSpawn - _remainingEnemies
-        };
-        TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
-        StartCoroutine(LoadIdleScene());
+        if (_elapsedTime > ConstValuesAndUtility.MaxRoundTime || _remainingEnemies == 0)
+            GameOver();
     }
 
     private void SpawnEnemies()
@@ -97,6 +91,34 @@ public class GameSceneManager : MonoBehaviour
     {
         _remainingEnemies--;
         enemiesLeftText.text = EnemiesLeftString + _remainingEnemies;
+    }
+
+    private void TellServerGameStarted()
+    {
+        var clientAnswer = new ClientAnswer
+        {
+            MessageLength = sizeof(int),
+            MessageType = MessageType.GameResponse,
+            GameResponse = GameResponse.GameStarted
+        };
+        TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
+    }
+
+    private void GameOver()
+    {
+        _shouldRunUpdate = false;
+        GameOverEvent?.Invoke();
+        gameOverText.text = "Game Over";
+        var clientAnswer = new ClientAnswer
+        {
+            MessageLength = sizeof(int) * 3,
+            MessageType = MessageType.GameStats,
+            ElapsedTime = (int) (_elapsedTime * 1000f),
+            ShotsFired = _shotsFired,
+            TargetsHit = ConstValuesAndUtility.NumberOfEnemiesToSpawn - _remainingEnemies
+        };
+        TcpClientScript.Instance.SendAnswerToServer(clientAnswer);
+        StartCoroutine(LoadIdleScene());
     }
 
     private IEnumerator LoadIdleScene()
