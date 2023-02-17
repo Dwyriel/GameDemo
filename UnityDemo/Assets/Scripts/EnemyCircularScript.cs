@@ -11,6 +11,7 @@ public class EnemyCircularScript : EnemyMovementBase
     }
 
     private CurrentState _currentState = CurrentState.AwayFromTarget;
+    private float _rotationDirection; 
 
     private void Start()
     {
@@ -46,69 +47,113 @@ public class EnemyCircularScript : EnemyMovementBase
 
     private void AwayFromTargetUpdate()
     {
-        if (DirectionToTarget.magnitude < ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude < ConstValuesAndUtility.MaxAllowedDistanceToTarget)
+        {
             SwitchToFinishRotatingState();
-        var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
-        if (angleToTarget is > -2f and < 2f)
             return;
-        var angleToRotate = angleToTarget > 0 ? -ConstValuesAndUtility.RotationAnglePerSecond : ConstValuesAndUtility.RotationAnglePerSecond;
-        ComponentRigidbody.MoveRotation(ComponentRigidbody.rotation * Quaternion.Euler(new Vector3(0, angleToRotate * Time.fixedDeltaTime, 0)));
+        }
+        var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
+        CalculateRotationAndInclination(angleToTarget);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void FinishRotatingUpdate()
     {
         var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
         if (angleToTarget is > -2f and < 2f)
+        {
             SwitchToFlyUntilCloseToTargetState();
-        var angleToRotate = angleToTarget > 0 ? -ConstValuesAndUtility.RotationAnglePerSecond : ConstValuesAndUtility.RotationAnglePerSecond;
-        ComponentRigidbody.MoveRotation(ComponentRigidbody.rotation * Quaternion.Euler(new Vector3(0, angleToRotate * Time.fixedDeltaTime, 0)));
+            return;
+        }
+        CalculateRotationAndInclination(angleToTarget);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void FlyUntilCloseToTargetUpdate()
     {
         switch (DirectionToTarget.magnitude)
         {
-            case > ConstValuesAndUtility.MaxDistanceToMidAllowed:
+            case > ConstValuesAndUtility.MaxAllowedDistanceToTarget:
                 SwitchToAwayFromTargetState();
-                break;
-            case < 10f:
+                return;
+            case < 50f:
                 SwitchToRotatingState();
-                break;
+                return;
         }
+        CalculateRotationAndInclination(0);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle, Inclination)));
     }
 
     private void RotatingUpdate()
     {
-        if (DirectionToTarget.magnitude > ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude > ConstValuesAndUtility.MaxAllowedDistanceToTarget)
+        {
             SwitchToAwayFromTargetState();
-        ComponentRigidbody.MoveRotation(ComponentRigidbody.rotation * Quaternion.Euler(new Vector3(0, RotationAngle / 2f * Time.fixedDeltaTime, 0)));
+            return;
+        }
+        CalculateRotationAndInclination(_rotationDirection);
+        var eulerAngles = transform.eulerAngles;
+        ComponentRigidbody.MoveRotation(Quaternion.Euler(new Vector3(eulerAngles.x, eulerAngles.y + RotationAngle / 2f, Inclination)));
     }
 
     private void SwitchToAwayFromTargetState()
     {
         _currentState = CurrentState.AwayFromTarget;
         GenerateTargetPosition();
+        AwayFromTargetUpdate();
     }
 
     private void SwitchToFinishRotatingState()
     {
         _currentState = CurrentState.FinishRotating;
+        FinishRotatingUpdate();
     }
 
     private void SwitchToFlyUntilCloseToTargetState()
     {
         _currentState = CurrentState.FlyUntilCloseToTarget;
+        FlyUntilCloseToTargetUpdate();
     }
 
     private void SwitchToRotatingState()
     {
         _currentState = CurrentState.Rotating;
-        RotationAngle = Random.value > .5f ? ConstValuesAndUtility.RotationAnglePerSecond : -ConstValuesAndUtility.RotationAnglePerSecond;
+        _rotationDirection = Random.value > .5f ? ConstValuesAndUtility.RotationAnglePerSecond : -ConstValuesAndUtility.RotationAnglePerSecond;
+        RotatingUpdate();
     }
 
     private void GenerateTargetPosition()
     {
         const float range = ConstValuesAndUtility.RandomMoveTargetRange;
         TargetPosition = MapCenterPosition + new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
+    }
+
+    private void CalculateRotationAndInclination(float angle)
+    {
+        switch (angle)
+        {
+            case >= -ConstValuesAndUtility.AngleSnapRange and <= ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = 0;
+                Inclination = Inclination switch
+                {
+                    > ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination),
+                    < -ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0),
+                    _ => 0
+                };
+                break;
+            case > ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination);
+                break;
+            case < -ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0);
+                break;
+            default:
+                return;
+        }
     }
 }

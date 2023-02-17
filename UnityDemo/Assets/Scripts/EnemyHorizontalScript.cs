@@ -42,7 +42,7 @@ public class EnemyHorizontalScript : EnemyMovementBase
 
     private void AwayFromTargetUpdate()
     {
-        if (DirectionToTarget.magnitude < ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude < ConstValuesAndUtility.MaxAllowedDistanceToTarget)
             SwitchToFinishRotatingState();
         var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
         CalculateRotationAndInclination(angleToTarget);
@@ -62,7 +62,7 @@ public class EnemyHorizontalScript : EnemyMovementBase
 
     private void FlyingStraightUpdate()
     {
-        if (DirectionToTarget.magnitude > ConstValuesAndUtility.MaxDistanceToMidAllowed)
+        if (DirectionToTarget.magnitude > ConstValuesAndUtility.MaxAllowedDistanceToTarget)
             SwitchToAwayFromTargetState();
         CalculateRotationAndInclination(0);
         var eulerAngles = transform.eulerAngles;
