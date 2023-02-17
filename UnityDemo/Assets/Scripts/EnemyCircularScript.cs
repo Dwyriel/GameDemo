@@ -18,6 +18,9 @@ public class EnemyCircularScript : EnemyMovementBase
         MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
         ComponentRigidbody = GetComponent<Rigidbody>();
         GenerateTargetPosition();
+        TargetPosition.y = transform.position.y;
+        transform.position = TargetPosition;
+        GenerateTargetPosition();
     }
 
     private void FixedUpdate()
@@ -61,7 +64,7 @@ public class EnemyCircularScript : EnemyMovementBase
     private void FinishRotatingUpdate()
     {
         var angleToTarget = Vector3.SignedAngle(DirectionToTarget, ForwardDirection, Vector3.up);
-        if (angleToTarget is > -2f and < 2f)
+        if (angleToTarget is > -2f and < 2f || DirectionToTarget.magnitude < 50f)
         {
             SwitchToFlyUntilCloseToTargetState();
             return;
