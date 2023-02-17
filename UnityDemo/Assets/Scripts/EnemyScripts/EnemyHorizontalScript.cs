@@ -15,6 +15,7 @@ public class EnemyHorizontalScript : EnemyMovementBase
     {
         MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
         ComponentRigidbody = GetComponent<Rigidbody>();
+        ChangeColor(GetComponentsInChildren<Renderer>(), new Color(1f, .4f, 0f));//orange
         GenerateTargetPosition();
     }
 

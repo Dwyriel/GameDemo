@@ -17,6 +17,7 @@ public class EnemySinusWaveScript : EnemyMovementBase
     {
         MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
         ComponentRigidbody = GetComponent<Rigidbody>();
+        ChangeColor(GetComponentsInChildren<Renderer>(), Color.magenta);
         GenerateTargetPosition();
         _generalDirection = (TargetPosition - transform.position).normalized;
     }

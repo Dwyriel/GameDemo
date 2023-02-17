@@ -12,6 +12,16 @@ public class EnemyMovementBase : MonoBehaviour
     protected Vector3 DirectionToTarget;
     protected float RotationAngle;
     protected float Inclination;
+
+    protected void ChangeColor(IEnumerable<Renderer> renderers, Color color)
+    {
+        foreach (var renderer in renderers)
+        {
+            if(renderer.gameObject.name == "Cockpit")
+                continue;
+            renderer.material.color = color;
+        }
+    }
     
     protected void GenerateTargetPosition()
     {

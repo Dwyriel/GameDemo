@@ -17,6 +17,7 @@ public class EnemyCircularScript : EnemyMovementBase
     {
         MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
         ComponentRigidbody = GetComponent<Rigidbody>();
+        ChangeColor(GetComponentsInChildren<Renderer>(), Color.red);
         GenerateTargetPosition();
         TargetPosition.y = transform.position.y;
         transform.position = TargetPosition;
