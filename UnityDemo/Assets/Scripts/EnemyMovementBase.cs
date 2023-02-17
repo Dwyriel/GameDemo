@@ -12,4 +12,36 @@ public class EnemyMovementBase : MonoBehaviour
     protected Vector3 DirectionToTarget;
     protected float RotationAngle;
     protected float Inclination;
+    
+    protected void GenerateTargetPosition()
+    {
+        const float range = ConstValuesAndUtility.RandomMoveTargetRange;
+        TargetPosition = MapCenterPosition + new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
+    }
+    
+    protected void CalculateRotationAndInclination(float angle)
+    {
+        switch (angle)
+        {
+            case >= -ConstValuesAndUtility.AngleSnapRange and <= ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = 0;
+                Inclination = Inclination switch
+                {
+                    > ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination),
+                    < -ConstValuesAndUtility.AngleSnapRange => Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0),
+                    _ => 0
+                };
+                break;
+            case > ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, 0, ConstValuesAndUtility.MaximumInclination);
+                break;
+            case < -ConstValuesAndUtility.AngleSnapRange:
+                RotationAngle = ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime;
+                Inclination = Mathf.Clamp(Inclination + -ConstValuesAndUtility.RotationAnglePerSecond * Time.fixedDeltaTime, -ConstValuesAndUtility.MaximumInclination, 0);
+                break;
+            default:
+                return;
+        }
+    }
 }
