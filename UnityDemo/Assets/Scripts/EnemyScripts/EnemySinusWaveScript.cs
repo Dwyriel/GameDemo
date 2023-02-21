@@ -93,6 +93,7 @@ public class EnemySinusWaveScript : EnemyMovementBase
     {
         _currentState = CurrentState.AwayFromTarget;
         GenerateTargetPosition();
+        _generalDirection = (TargetPosition - transform.position).normalized;
         AwayFromTargetUpdate();
     }
 

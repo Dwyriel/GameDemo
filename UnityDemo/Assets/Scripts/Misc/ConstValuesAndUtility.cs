@@ -26,7 +26,7 @@ public static class ConstValuesAndUtility
 
     #region Enemies
 
-    public const float MaxAllowedDistanceToTarget = 300;
+    public const float MaxAllowedDistanceToTarget = 350;
     public const float RandomMoveTargetRange = 50f;
     public const float MovingUnitsPerSecond = 15;
     public const float AngleSnapRange = 2f;
