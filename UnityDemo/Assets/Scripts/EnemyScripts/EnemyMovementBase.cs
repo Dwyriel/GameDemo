@@ -20,6 +20,14 @@ public class EnemyMovementBase : MonoBehaviour
         GenerateTargetPosition();
     }
 
+    protected virtual void UpdateAttributes()
+    {
+        CurrentPosition = transform.position;
+        ForwardDirection = transform.forward;
+        ComponentRigidbody.MovePosition(CurrentPosition + ForwardDirection * ConstValuesAndUtility.MovingUnitsPerSecond * Time.fixedDeltaTime);
+        DirectionToTarget = TargetPosition - CurrentPosition;
+    }
+
     protected void ChangeColor(IEnumerable<Renderer> renderers, Color color)
     {
         foreach (var renderer in renderers)

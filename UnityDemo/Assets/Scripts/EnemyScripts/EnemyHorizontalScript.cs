@@ -18,10 +18,7 @@ public class EnemyHorizontalScript : EnemyMovementBase
 
     private void FixedUpdate()
     {
-        CurrentPosition = transform.position;
-        ForwardDirection = transform.forward;
-        ComponentRigidbody.MovePosition(CurrentPosition + ForwardDirection * ConstValuesAndUtility.MovingUnitsPerSecond * Time.fixedDeltaTime);
-        DirectionToTarget = TargetPosition - CurrentPosition;
+        UpdateAttributes();
         switch (_currentState)
         {
             case CurrentState.AwayFromTarget:
