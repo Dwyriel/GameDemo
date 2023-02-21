@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyCircularScript : EnemyMovementBase
@@ -11,17 +12,11 @@ public class EnemyCircularScript : EnemyMovementBase
     }
 
     private CurrentState _currentState = CurrentState.AwayFromTarget;
-    private float _rotationDirection; 
+    private float _rotationDirection;
 
     private void Start()
     {
-        MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
-        ComponentRigidbody = GetComponent<Rigidbody>();
-        ChangeColor(GetComponentsInChildren<Renderer>(), Color.red);
-        GenerateTargetPosition();
-        TargetPosition.y = transform.position.y;
-        transform.position = TargetPosition;
-        GenerateTargetPosition();
+        SetStartAttributes(GetComponentsInChildren<Renderer>(), Color.red);
     }
 
     private void FixedUpdate()
@@ -127,5 +122,13 @@ public class EnemyCircularScript : EnemyMovementBase
         _currentState = CurrentState.Rotating;
         _rotationDirection = Random.value > .5f ? ConstValuesAndUtility.RotationAnglePerSecond : -ConstValuesAndUtility.RotationAnglePerSecond;
         RotatingUpdate();
+    }
+
+    protected override void SetStartAttributes(IEnumerable<Renderer> renderers, Color color)
+    {
+        base.SetStartAttributes(renderers, color);
+        TargetPosition.y = transform.position.y;
+        transform.position = TargetPosition;
+        GenerateTargetPosition();
     }
 }

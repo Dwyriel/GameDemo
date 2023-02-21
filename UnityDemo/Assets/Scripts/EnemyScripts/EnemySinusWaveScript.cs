@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySinusWaveScript : EnemyMovementBase
@@ -15,11 +16,7 @@ public class EnemySinusWaveScript : EnemyMovementBase
 
     private void Start()
     {
-        MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
-        ComponentRigidbody = GetComponent<Rigidbody>();
-        ChangeColor(GetComponentsInChildren<Renderer>(), Color.magenta);
-        GenerateTargetPosition();
-        _generalDirection = (TargetPosition - transform.position).normalized;
+        SetStartAttributes(GetComponentsInChildren<Renderer>(), Color.magenta);
     }
 
     private void FixedUpdate()
@@ -108,5 +105,12 @@ public class EnemySinusWaveScript : EnemyMovementBase
         _currentState = CurrentState.SinusWaveFlight;
         _angleToTurn = ConstValuesAndUtility.RotationAnglePerSecond;
         SinusWaveFlightUpdate();
+    }
+
+    protected override void SetStartAttributes(IEnumerable<Renderer> renderers, Color color)
+    {
+        base.SetStartAttributes(renderers, color);
+        _generalDirection = (TargetPosition - transform.position).normalized;
+        _angleToTurn = ConstValuesAndUtility.RotationAnglePerSecond;
     }
 }

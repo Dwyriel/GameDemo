@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,22 +12,30 @@ public class EnemyMovementBase : MonoBehaviour
     protected float RotationAngle;
     protected float Inclination;
 
+    protected virtual void SetStartAttributes(IEnumerable<Renderer> renderers, Color color)
+    {
+        MapCenterPosition = GameObject.FindWithTag(ConstValuesAndUtility.MapCenterPointTag).transform.position;
+        ComponentRigidbody = GetComponent<Rigidbody>();
+        ChangeColor(renderers, color);
+        GenerateTargetPosition();
+    }
+
     protected void ChangeColor(IEnumerable<Renderer> renderers, Color color)
     {
         foreach (var renderer in renderers)
         {
-            if(renderer.gameObject.name == "Cockpit")
+            if (renderer.gameObject.name == "Cockpit")
                 continue;
             renderer.material.color = color;
         }
     }
-    
+
     protected void GenerateTargetPosition()
     {
         const float range = ConstValuesAndUtility.RandomMoveTargetRange;
         TargetPosition = MapCenterPosition + new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
     }
-    
+
     protected void CalculateRotationAndInclination(float angle)
     {
         switch (angle)
