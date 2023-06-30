@@ -1,7 +1,5 @@
 #include "Logger.h"
 
-Logger *Logger::logger = nullptr;
-
 Logger::Logger() {
     logsDirPath = QCoreApplication::applicationDirPath() + QDir::separator() + LOGS_DIR_NAME;
     QDir logDir(logsDirPath);
@@ -14,8 +12,7 @@ Logger::Logger() {
 }
 
 Logger *Logger::Instance() {
-    if (!logger)
-        logger = new Logger();
+    static auto logger = new Logger();
     return logger;
 }
 

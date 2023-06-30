@@ -22,7 +22,6 @@ public:
 private:
     explicit Logger();
 
-    static Logger *logger;
     QString logsDirPath;
     QFile file;
 
